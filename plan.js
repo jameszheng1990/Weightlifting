@@ -1,18 +1,18 @@
 const plan = [
-{phase:"累积",days:{
-"周一":{main:[["Back Squat","82.5 kg × 4组 × 4次"],["Front Squat","70 kg × 4组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
-"周二":{choiceMain:{sn:"65–70% × 5组 × 2次",cj:"65–70% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
-"周四":{choiceMain:{sn:"75–80% × 4–5个 single",cj:"75–80% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+{phase:"累积（Hypertrophy）",days:{
+"周一":{main:[["Back Squat","80 kg × 4组 × 6次"],["Front Squat","70 kg × 4组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"60–65% × 4组 × 2次",cj:"60–65% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"65–70% × 4个 single",cj:"65–70% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
 "周五":{main:[["Front Squat","77.5 kg × 4组 × 4次"],["Paused Back Squat","72.5 kg × 3组 × 3次，底部停2秒"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
-{phase:"累积",days:{
-"周一":{main:[["Back Squat","85 kg × 4组 × 4次"],["Front Squat","72.5 kg × 3组 × 4次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
-"周二":{choiceMain:{sn:"68–72% × 5组 × 2次",cj:"68–72% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
-"周四":{choiceMain:{sn:"80–83% × 4个 single",cj:"80–83% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+{phase:"累积（Hypertrophy）",days:{
+"周一":{main:[["Back Squat","82.5 kg × 4组 × 5次"],["Front Squat","72.5 kg × 3组 × 4次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"62–67% × 4组 × 2次",cj:"62–67% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"70–75% × 4个 single",cj:"70–75% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
 "周五":{main:[["Front Squat","82.5 kg × 5组 × 3次"],["Paused Back Squat","75 kg × 3组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
-{phase:"累积",days:{
+{phase:"累积（Hypertrophy）",days:{
 "周一":{main:[["Back Squat","87.5 kg × 4组 × 4次"],["Front Squat","75 kg × 3组 × 4次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
-"周二":{choiceMain:{sn:"70–75% × 5组 × 2次",cj:"70–75% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
-"周四":{choiceMain:{sn:"82–85% × 4个 single",cj:"82–85% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周二":{choiceMain:{sn:"65–70% × 4组 × 2次",cj:"65–70% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"75–80% × 3–4个 single",cj:"75–80% × 3–4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
 "周五":{main:[["Front Squat","85 kg × 5组 × 3次"],["Paused Back Squat","77.5 kg × 3组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"Deload",days:{
 "周一":{main:[["Back Squat","77.5 kg × 3组 × 3次"],["Front Squat","65 kg × 2组 × 3次"]],assist:[["Heavy Walkout / 预蹲","可省略"],["Back Extension / 山羊挺身","2组轻量"]]},
