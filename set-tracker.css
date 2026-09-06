@@ -1,18 +1,11 @@
 .quick-load-btn,#setCurrentBar{display:none!important}
 .exercise.has-set-tracker>input[type=checkbox]{visibility:hidden;pointer-events:none}
-.set-tracker{margin-top:9px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:#fafafa}
-.set-tracker-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.set-tracker-count{font-size:13px;font-weight:800}
+.set-tracker{margin-top:9px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa}
+.set-tracker-top,.warmup-record-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.set-tracker-count,.warmup-record-head>span:first-child{font-size:13px;font-weight:800}
 .set-tracker-count.complete{color:var(--good)}
-.set-tracker-actions{display:flex;gap:7px;margin-top:8px}
-.set-tracker-actions button{flex:1;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-size:13px;font-weight:800}
-.set-tracker-actions button.set-add{background:#111827;color:#fff;border-color:#111827}
-.set-tracker-actions button:disabled{opacity:.4}
-.set-timer-proxy{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;margin:0!important}
-.warmup-record{margin:7px 0 10px;padding:9px 10px;border:1px solid #dbe3ee;border-radius:11px;background:#fff}
-.warmup-record-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#475569;margin-bottom:7px}
-.warmup-record-steps{display:flex;flex-wrap:wrap;gap:6px}
-.warmup-record-step{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:#fafafa;font-size:12px}
-.warmup-record-step.done{background:#dcfce7;border-color:#86efac;color:#166534}
-.warmup-record-step button{border:0;background:transparent;padding:0;box-shadow:none;font-size:12px;font-weight:900;color:inherit}
-@media(max-width:560px){.set-tracker-actions{width:100%}.warmup-record-steps{display:grid;grid-template-columns:1fr 1fr}.warmup-record-step{justify-content:space-between}}
+.work-set-buttons,.warmup-set-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:9px}
+.work-set-btn,.warmup-set-btn{min-height:44px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 8px;font-size:13px;font-weight:800;box-shadow:none}
+.work-set-btn.done,.warmup-set-btn.done{background:#dcfce7;border-color:#86efac;color:#166534}
+.warmup-record{margin:7px 0 10px;padding:10px;border:1px solid #dbe3ee;border-radius:12px;background:#fff}
+@media(max-width:560px){.work-set-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.warmup-set-buttons{grid-template-columns:1fr}.work-set-btn,.warmup-set-btn{min-height:48px;font-size:14px}}
