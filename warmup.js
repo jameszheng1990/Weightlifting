@@ -18,6 +18,7 @@
   function short(weight){
     return [`${kg(r25(weight*.60))} × 3`,`${kg(r25(weight*.80))} × 2`,`${kg(r25(weight*.90))} × 1`,"正式组"];
   }
+  function isPrTest(e){return /PR Test/i.test(e?.querySelector(".exname")?.textContent||"")}
   let obs=null,root=null;
   function inject(){
     root=document.getElementById("content");
@@ -31,15 +32,15 @@
       const day=(h.textContent||"").trim();
       if(day.startsWith("周一")){
         const ex=[...card.querySelectorAll(".exercise")];
-        const bs=ex.find(e=>/Back Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!/Paused/i.test(e.querySelector(".exname")?.textContent||""));
-        const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||""));
+        const bs=ex.find(e=>/Back Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!/Paused/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
+        const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
         if(bs){const rx=bs.querySelector(".prescription")?.textContent||"";bs.before(box(full(parseWorkWeight(rx,trainingMaxes.bs*.75)),false));}
         if(fs){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(short(parseWorkWeight(rx,trainingMaxes.fs*.75)),true));}
       }
       if(day.startsWith("周五")){
         const ex=[...card.querySelectorAll(".exercise")];
-        const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||""));
-        const pbs=ex.find(e=>/Paused Back Squat/i.test(e.querySelector(".exname")?.textContent||""));
+        const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
+        const pbs=ex.find(e=>/Paused Back Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
         if(fs){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(full(parseWorkWeight(rx,trainingMaxes.fs*.80)),false));}
         if(pbs){const rx=pbs.querySelector(".prescription")?.textContent||"";pbs.before(box(short(parseWorkWeight(rx,trainingMaxes.bs*.70)),true));}
       }
