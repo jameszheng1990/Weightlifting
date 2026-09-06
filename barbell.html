@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Mixed Plate Barbell Loader</title>
+<link rel="stylesheet" href="barbell.css?v=1">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Barbell Loader</h1>
+    <div class="sub">KG + LB mixed plates · 最接近 / 向下 / 向上</div>
+  </div>
+  <a href="./" class="back">训练计划</a>
+</header>
+<main class="wrap">
+  <section class="card hero">
+    <div class="grid2">
+      <div>
+        <label>目标总重量</label>
+        <div class="weightinput"><input id="target" type="number" inputmode="decimal" step="0.1" value="100"><select id="targetUnit"><option value="kg">kg</option><option value="lb">lb</option></select></div>
+      </div>
+      <div>
+        <label>杠铃</label>
+        <select id="barPreset">
+          <option value="20kg">20 kg Olympic Bar</option>
+          <option value="15kg">15 kg Bar</option>
+          <option value="45lb">45 lb Bar</option>
+          <option value="custom">自定义</option>
+        </select>
+      </div>
+    </div>
+    <div class="custombar hidden" id="customBarRow">
+      <label>自定义杠铃重量</label>
+      <div class="weightinput"><input id="customBar" type="number" inputmode="decimal" step="0.1" value="20"><select id="customBarUnit"><option value="kg">kg</option><option value="lb">lb</option></select></div>
+    </div>
+    <div class="mode" id="modeButtons">
+      <button data-mode="nearest" class="active">绝对值最小</button>
+      <button data-mode="floor">向下取</button>
+      <button data-mode="ceil">向上取</button>
+    </div>
+  </section>
+
+  <section class="card result" id="resultCard">
+    <div class="resulttop">
+      <div><div class="small">实际总重量</div><div class="big" id="actual">—</div></div>
+      <div class="delta" id="delta">—</div>
+    </div>
+    <div class="barviz"><div class="sleeve left" id="leftSleeve"></div><div class="shaft"></div><div class="sleeve right" id="rightSleeve"></div></div>
+    <div class="perSideTitle">每侧挂片</div>
+    <div class="platesResult" id="platesResult"></div>
+    <div class="small center" id="explain"></div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><div><h2>KG Plates</h2><div class="small">勾选可用片；数量按“对”计算（1 对 = 左右各 1 片）</div></div><button class="textbtn" data-reset="kg">重置</button></div>
+    <div class="inventory" id="kgInventory"></div>
+  </section>
+
+  <section class="card">
+    <div class="sectionhead"><div><h2>LB Plates</h2><div class="small">可以和 KG 片同时参与最优组合</div></div><button class="textbtn" data-reset="lb">重置</button></div>
+    <div class="inventory" id="lbInventory"></div>
+  </section>
+
+  <section class="card note">
+    <b>计算规则</b>
+    <p>只使用成对的片，左右完全对称。算法会在你勾选的库存范围内搜索全部可行组合，不是简单从大到小贪心。</p>
+  </section>
+</main>
+<script src="barbell.js?v=1"></script>
+</body>
+</html>
