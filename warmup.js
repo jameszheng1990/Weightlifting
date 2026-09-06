@@ -13,7 +13,7 @@
     return d;
   }
   function full(weight){
-    return ["空杆 × 10", "空杆 × 10", `${kg(r25(weight*.50))} × 5`,`${kg(r25(weight*.65))} × 4`,`${kg(r25(weight*.80))} × 2`,`${kg(r25(weight*.90))} × 1`,"正式组"];
+    return ["空杆 × 10", `${kg(r25(weight*.50))} × 5`,`${kg(r25(weight*.65))} × 4`,`${kg(r25(weight*.80))} × 2`,`${kg(r25(weight*.90))} × 1`,"正式组"];
   }
   function short(weight){
     return [`${kg(r25(weight*.60))} × 3`,`${kg(r25(weight*.80))} × 2`,`${kg(r25(weight*.90))} × 1`,"正式组"];
