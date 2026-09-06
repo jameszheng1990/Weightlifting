@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>12周举重训练计划</title>
+<style>
+:root{
+  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#111827;--good:#166534;--goodbg:#dcfce7;--warn:#92400e;--warnbg:#fef3c7;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:5;background:rgba(246,247,251,.92);backdrop-filter:blur(14px);padding:18px 16px 10px;border-bottom:1px solid var(--line)}
+h1{font-size:22px;margin:0 0 6px}
+.sub{font-size:13px;color:var(--muted)}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 90px}
+.toolbar{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
+button,.pill{border:0;border-radius:12px;padding:10px 12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:14px}
+button.active{background:var(--accent);color:white}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.weektitle{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.weektitle h2{font-size:19px;margin:0}
+.badge{font-size:12px;padding:5px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
+.day{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.day:first-of-type{border-top:0}
+.day h3{margin:0 0 8px;font-size:16px}
+.exercise{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:9px 0;border-bottom:1px dashed #eee}
+.exercise:last-child{border-bottom:0}
+input[type=checkbox]{width:22px;height:22px;margin-top:2px}
+.exname{font-weight:650}
+.prescription{font-size:14px;color:#374151;margin-top:2px}
+.fields{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:8px}
+.fields input,.notes,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px;background:#fff}
+.notes{margin-top:8px;min-height:40px;resize:vertical}
+.done{background:var(--goodbg)}
+.done .exname{color:var(--good);text-decoration:line-through}
+.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:8px 0 2px}
+.progress>div{height:100%;background:#111827;width:0}
+.small{font-size:12px;color:var(--muted)}
+.rules li{margin:7px 0;line-height:1.35}
+.footerbar{position:fixed;bottom:0;left:0;right:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid var(--line);backdrop-filter:blur(14px)}
+.footerbar .inner{max-width:760px;margin:auto;display:flex;gap:8px}
+.footerbar button{flex:1}
+.primary{background:#111827;color:#fff}
+.danger{color:#991b1b}
+.hidden{display:none!important}
+@media (min-width:640px){.fields{grid-template-columns:1fr 100px 1fr}.notes{margin-top:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>12周举重专项深蹲 + 抓挺</h1>
+  <div class="sub">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
+</header>
+
+<div class="wrap">
+  <div class="toolbar" id="weekTabs"></div>
+
+  <div class="card">
+    <div class="weektitle">
+      <div>
+        <h2 id="currentWeekLabel">Week 1</h2>
+        <div class="small" id="phaseLabel"></div>
+      </div>
+      <span class="badge" id="weekBadge"></span>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="small" id="progressText"></div>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="card rules">
+    <h3 style="margin-top:0">周期规则</h3>
+    <ul>
+      <li>周一 Heavy Back Squat 是深蹲 progression 第一优先。</li>
+      <li>周五 Heavy Front Squat 是第二优先。</li>
+      <li>Paused Back Squat 永远是辅助，不做成第二个重后蹲日。</li>
+      <li>周二抓挺以速度、位置和 0 miss 为主。</li>
+      <li>周四可以重，但百分比是范围，不是命令。</li>
+      <li>Heavy single 目标 RPE 8–9，不做极限 grind。</li>
+      <li>恢复差：先减周五暂停蹲 1 组，再减周一辅助前蹲 1 组。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footerbar">
+  <div class="inner">
+    <button onclick="jumpToday()">本周</button>
+    <button class="primary" onclick="exportData()">导出记录</button>
+    <button class="danger" onclick="resetWeek()">重置本周</button>
+  </div>
+</div>
+
+<script>
+const plan = [
+{phase:"积累",days:{
+"周一":[["Back Squat","82.5 kg × 5组 × 4次"],["Front Squat","70 kg × 4组 × 3次"]],
+"周二":[["Snatch","65–70% × 5组 × 2次"],["Clean & Jerk","65–70% × 4组 × 1–2次"]],
+"周四":[["Snatch","75–80% × 4–5个 single"],["Clean & Jerk","75–80% × 4个 single"]],
+"周五":[["Front Squat","77.5 kg × 4组 × 4次"],["Paused Back Squat","72.5 kg × 5组 × 3次，底部停2秒"]]}},
+{phase:"积累",days:{
+"周一":[["Back Squat","85 kg × 5组 × 4次"],["Front Squat","72.5 kg × 3组 × 4次"]],
+"周二":[["Snatch","68–72% × 5组 × 2次"],["Clean & Jerk","68–72% × 4组 × 1–2次"]],
+"周四":[["Snatch","80–83% × 4个 single"],["Clean & Jerk","80–83% × 4个 single"]],
+"周五":[["Front Squat","82.5 kg × 5组 × 3次"],["Paused Back Squat","75 kg × 3组 × 5次"]]}},
+{phase:"积累",days:{
+"周一":[["Back Squat","87.5 kg × 5组 × 4次"],["Front Squat","75 kg × 3组 × 4次"]],
+"周二":[["Snatch","70–75% × 5组 × 2次"],["Clean & Jerk","70–75% × 4组 × 1–2次"]],
+"周四":[["Snatch","82–85% × 4个 single"],["Clean & Jerk","82–85% × 4个 single"]],
+"周五":[["Front Squat","85 kg × 5组 × 3次"],["Paused Back Squat","77.5 kg × 3组 × 5次"]]}},
+{phase:"Deload",days:{
+"周一":[["Back Squat","77.5 kg × 3组 × 3次"],["Front Squat","65 kg × 2组 × 3次"]],
+"周二":[["Snatch","60–65% × 4组 × 2次"],["Clean & Jerk","60–65% × 3–4个 single"]],
+"周四":[["Snatch","65–70% × 3个 single"],["Clean & Jerk","65–70% × 3个 single"]],
+"周五":[["Front Squat","72.5 kg × 3组 × 3次"],["Paused Back Squat","67.5 kg × 2组 × 4次"]]}},
+{phase:"力量",days:{
+"周一":[["Back Squat","90 kg × 5组 × 3次"],["Front Squat","77.5 kg × 3组 × 3次"]],
+"周二":[["Snatch","72–75% × 5组 × 2次"],["Clean & Jerk","72–75% × 4个 single"]],
+"周四":[["Snatch","85% × 3–4个 single"],["Clean & Jerk","85% × 3个 single"]],
+"周五":[["Front Squat","85 kg × 4组 × 3次"],["Paused Back Squat","80 kg × 3组 × 4次"]]}},
+{phase:"力量",days:{
+"周一":[["Back Squat","92.5 kg × 5组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],
+"周二":[["Snatch","75–78% × 4组 × 2次"],["Clean & Jerk","75–80% × 4个 single"]],
+"周四":[["Snatch","87–88% × 3个 single"],["Clean & Jerk","87–88% × 3个 single"]],
+"周五":[["Front Squat","87.5 kg × 4组 × 3次"],["Paused Back Squat","82.5 kg × 3组 × 4次"]]}},
+{phase:"力量",days:{
+"周一":[["Back Squat Heavy Single","100–102.5 kg × 1，RPE 8–8.5"],["Back Squat Back-off","92.5–95 kg × 3组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],
+"周二":[["Snatch","78–82% × 4组 × 1–2次"],["Clean & Jerk","78–82% × 4个 single"]],
+"周四":[["Snatch","88–90% × 2–3个 single"],["Clean & Jerk","88–90% × 2–3个 single"]],
+"周五":[["Front Squat","90 kg × 4组 × 2次"],["Paused Back Squat","85 kg × 3组 × 4次"]]}},
+{phase:"Deload",days:{
+"周一":[["Back Squat","80 kg × 3组 × 3次"],["Front Squat","67.5 kg × 2组 × 3次"]],
+"周二":[["Snatch","60–70% × 3–4组 × 1–2次"],["Clean & Jerk","60–70% × 3个 single"]],
+"周四":[["Snatch","65–70% × 3个 single"],["Clean & Jerk","65–70% × 3个 single"]],
+"周五":[["Front Squat","75 kg × 3组 × 3次"],["Paused Back Squat","70 kg × 2组 × 4次"]]}},
+{phase:"强化",days:{
+"周一":[["Back Squat Heavy Single","105 kg × 1"],["Back Squat Back-off","95 kg × 3组 × 2次"],["Front Squat","82.5 kg × 3组 × 2次"]],
+"周二":[["Snatch","75–80% × 4个 single"],["Clean & Jerk","75–80% × 4个 single"]],
+"周四":[["Snatch","90–92% × 2–3个重 single"],["Clean & Jerk","90–92% × 2–3个重 single"]],
+"周五":[["Front Squat","90 kg × 3组 × 2次"],["Paused Back Squat","82.5 kg × 3组 × 3次"]]}},
+{phase:"强化",days:{
+"周一":[["Back Squat Heavy Single","107.5 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5 kg × 3组 × 2次"],["Front Squat","85 kg × 3组 × 2次"]],
+"周二":[["Snatch","75–80% × 3–4个 single"],["Clean & Jerk","75–80% × 3–4个 single"]],
+"周四":[["Snatch","92–94% × 1–2个 single"],["Clean & Jerk","92–94% × 1–2个 single"]],
+"周五":[["Front Squat","92.5 kg × 3组 × 2次"],["Paused Back Squat","85 kg × 3组 × 3次"]]}},
+{phase:"峰值",days:{
+"周一":[["Back Squat Heavy Single","110 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5–100 kg × 2组 × 2次"],["Front Squat","87.5 kg × 2组 × 2次"]],
+"周二":[["Snatch","70–75% × 3–4个 single"],["Clean & Jerk","70–75% × 3个 single"]],
+"周四":[["Snatch","90–95% × 1–2个高质量重 single"],["Clean & Jerk","90–95% × 1–2个高质量重 single"]],
+"周五":[["Front Squat Heavy Single","95 kg × 1"],["Front Squat Back-off","90 kg × 2组 × 2次"],["Paused Back Squat","85 kg × 2组 × 3次"]]}},
+{phase:"Test Week",days:{
+"周一":[["Back Squat PR Test","60×5 → 80×3 → 90×2 → 100×1 → 107.5×1 → 112.5×1 → 117.5×1 → 120×1（顺的话可122.5）"]],
+"周二":[["Snatch","60–70% × 3个 single"],["Clean & Jerk","60–70% × 2–3个 single"]],
+"周四":[["Snatch Test","70% → 80% → 87% → 92% → 95% → PR attempt"],["Clean & Jerk Test","70% → 80% → 87% → 92% → 95% → PR attempt"]],
+"周五":[["Front Squat Recovery","70–75 kg × 2组 × 2次"],["Paused Back Squat","不做"]]}
+}}
+];
+
+let currentWeek = Number(localStorage.getItem("wl_current_week") || 1);
+const key=(w,d,i)=>`wl_${w}_${d}_${i}`;
+function saveField(k,v){localStorage.setItem(k,v)}
+function loadField(k){return localStorage.getItem(k)||""}
+
+function renderTabs(){
+ const el=document.getElementById("weekTabs"); el.innerHTML="";
+ plan.forEach((_,i)=>{
+   const b=document.createElement("button");
+   b.textContent=`W${i+1}`; b.className=(i+1===currentWeek)?"active":"";
+   b.onclick=()=>{currentWeek=i+1;localStorage.setItem("wl_current_week",currentWeek);render()};
+   el.appendChild(b);
+ });
+}
+function render(){
+ renderTabs();
+ const w=plan[currentWeek-1];
+ document.getElementById("currentWeekLabel").textContent=`Week ${currentWeek}`;
+ document.getElementById("phaseLabel").textContent=`阶段：${w.phase}`;
+ document.getElementById("weekBadge").textContent=w.phase;
+ const content=document.getElementById("content"); content.innerHTML="";
+ let total=0,done=0;
+ Object.entries(w.days).forEach(([day,exs])=>{
+   const card=document.createElement("div"); card.className="card";
+   const h=document.createElement("h3"); h.textContent=day; h.style.marginTop="0"; card.appendChild(h);
+   exs.forEach((ex,i)=>{
+     total++;
+     const id=key(currentWeek,day,i);
+     const checked=loadField(id+"_done")==="1"; if(checked) done++;
+     const row=document.createElement("div"); row.className="exercise"+(checked?" done":"");
+     const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=checked;
+     cb.onchange=()=>{saveField(id+"_done",cb.checked?"1":"0");render()};
+     const body=document.createElement("div");
+     body.innerHTML=`<div class="exname">${ex[0]}</div><div class="prescription">${ex[1]}</div>`;
+     const fields=document.createElement("div"); fields.className="fields";
+     fields.innerHTML=`
+       <input placeholder="实际重量/完成情况" value="${esc(loadField(id+"_actual"))}">
+       <input placeholder="RPE" value="${esc(loadField(id+"_rpe"))}">
+       <input placeholder="备注" value="${esc(loadField(id+"_note"))}">
+     `;
+     const ins=fields.querySelectorAll("input");
+     ins[0].oninput=e=>saveField(id+"_actual",e.target.value);
+     ins[1].oninput=e=>saveField(id+"_rpe",e.target.value);
+     ins[2].oninput=e=>saveField(id+"_note",e.target.value);
+     body.appendChild(fields); row.appendChild(cb); row.appendChild(body); card.appendChild(row);
+   });
+   content.appendChild(card);
+ });
+ const pct=total?Math.round(done/total*100):0;
+ document.getElementById("progressBar").style.width=pct+"%";
+ document.getElementById("progressText").textContent=`本周完成 ${done}/${total} · ${pct}%`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function resetWeek(){
+ if(!confirm(`确定重置 Week ${currentWeek} 的勾选和记录吗？`)) return;
+ const prefix=`wl_${currentWeek}_`;
+ Object.keys(localStorage).filter(k=>k.startsWith(prefix)).forEach(k=>localStorage.removeItem(k));
+ render();
+}
+function exportData(){
+ let out=`12周举重训练记录\n\n`;
+ plan.forEach((w,wi)=>{
+   out+=`WEEK ${wi+1} — ${w.phase}\n`;
+   Object.entries(w.days).forEach(([day,exs])=>{
+     out+=`${day}\n`;
+     exs.forEach((ex,i)=>{
+       const id=key(wi+1,day,i), done=loadField(id+"_done")==="1";
+       out+=`${done?"✅":"☐"} ${ex[0]} — ${ex[1]}\n`;
+       const a=loadField(id+"_actual"),r=loadField(id+"_rpe"),n=loadField(id+"_note");
+       if(a||r||n) out+=`  实际:${a||"-"} | RPE:${r||"-"} | 备注:${n||"-"}\n`;
+     });
+   });
+   out+="\n";
+ });
+ const blob=new Blob([out],{type:"text/plain;charset=utf-8"});
+ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="12周举重训练记录.txt"; a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function jumpToday(){ render(); window.scrollTo({top:0,behavior:"smooth"}); }
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+
+</body>
+</html>
