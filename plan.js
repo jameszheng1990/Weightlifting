@@ -58,5 +58,5 @@ const plan = [
 "周一":{main:[["Back Squat PR Test","60×5 → 80×3 → 90×2 → 100×1 → 107.5×1 → 112.5×1 → 117.5×1 → 120×1（顺的话可122.5）"]],assist:[["Heavy Walkout / 预蹲","不做"],["Back Extension / 山羊挺身","不做"]]},
 "周二":{choiceMain:{sn:"60–70% × 3个 single",cj:"60–70% × 2–3个 single"},choicePull:"不做或极轻",assist:[["Barbell Row / 杠铃划船","不做或极轻"]]},
 "周四":{choiceMain:{sn:"70% → 80% → 87% → 92% → 95% → PR attempt",cj:"70% → 80% → 87% → 92% → 95% → PR attempt"},choicePull:"不做",assist:[["Dips / 双杠臂屈伸","不做"]]},
-"周五":{main:[["Front Squat Recovery","70–75 kg × 2组 × 2次"],["Paused Back Squat","不做"]],assist:[["Pull-up / 引体向上","轻松 1–2组"],["Rear Delt Fly / 飞鸟","轻松 1–2组"]]}}}
+"周五":{main:[["Front Squat PR Test","60×5 → 75×3 → 85×2 → 92.5×1 → 97.5×1 → 102.5×1 → 105×1（顺的话可107.5）"]],assist:[["Pull-up / 引体向上","不做"],["Rear Delt Fly / 飞鸟","不做"]]}}}
 ]
