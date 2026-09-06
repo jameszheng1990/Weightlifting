@@ -20,35 +20,51 @@ function warmupComplete(row){const rec=linkedWarmup(row);if(!rec)return true;con
 function workComplete(row){const buttons=$$('.work-set-btn',row);return buttons.length>0&&buttons.every(b=>b.classList.contains('done'))}
 function syncSection(row){const cb=originalCheckbox(row);if(!cb)return;const should=workComplete(row)&&warmupComplete(row);if(cb.checked!==should)cb.click()}
 function notifySession(row){try{window.TrainingSession?.touch(row)}catch(e){}}
+function syncLegacyField(input,value){if(!input)return;input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('blur',{bubbles:true}))}
 function addFormalTracker(row){
   if(row.querySelector('.set-tracker'))return;
   const rx=row.querySelector('.prescription')?.textContent||'',repsBySet=parseScheme(rx),total=repsBySet.length;
   if(!total)return;
   row.classList.add('has-set-tracker');
   const body=row.querySelector(':scope > div');if(!body)return;
-  const key=exerciseKey(row,'work'),stored=localStorage.getItem(key),legacyDone=!!originalCheckbox(row)?.checked;
+  const key=exerciseKey(row,'work'),rpeKey=exerciseKey(row,'rpe'),noteKey=exerciseKey(row,'note'),stored=localStorage.getItem(key),legacyDone=!!originalCheckbox(row)?.checked;
   let done=[];try{done=stored?JSON.parse(stored):[]}catch(e){}
   if(!Array.isArray(done))done=[];
   if(!stored&&legacyDone)done=Array(total).fill(true);
   done=Array.from({length:total},(_,i)=>!!done[i]);
+  let rpes=[];try{rpes=JSON.parse(localStorage.getItem(rpeKey)||'[]')}catch(e){}
+  if(!Array.isArray(rpes))rpes=[];
+  rpes=Array.from({length:total},(_,i)=>rpes[i]??'');
+  const oldFields=body.querySelector('.fields'),oldInputs=oldFields?[...oldFields.querySelectorAll('input')]:[];
+  if(oldFields){oldFields.classList.add('fields-settracker');if(oldInputs[1])oldInputs[1].classList.add('legacy-hidden-field');if(oldInputs[2])oldInputs[2].classList.add('legacy-hidden-field')}
+  const oldNote=oldInputs[2]?.value||'';
+  let note=localStorage.getItem(noteKey);if(note===null)note=oldNote;
   const box=document.createElement('div');box.className='set-tracker';
   const head=document.createElement('div');head.className='set-tracker-top';
   const count=document.createElement('span');count.className='set-tracker-count';
-  const hint=document.createElement('span');hint.className='small';hint.textContent='每做完一组点对应按钮';
+  const hint=document.createElement('span');hint.className='small';hint.textContent='每组完成 + 每组 RPE';
   head.append(count,hint);
-  const grid=document.createElement('div');grid.className='work-set-buttons';
+  const grid=document.createElement('div');grid.className='work-set-rows';
   box.append(head,grid);
-  const fields=body.querySelector('.fields');
-  if(fields)body.insertBefore(box,fields);else body.appendChild(box);
-  function save(){localStorage.setItem(key,JSON.stringify(done))}
+  const buttons=[];
+  function saveDone(){localStorage.setItem(key,JSON.stringify(done))}
+  function saveRpes(){localStorage.setItem(rpeKey,JSON.stringify(rpes));const latest=[...rpes].reverse().find(v=>String(v).trim()!=='')||'';syncLegacyField(oldInputs[1],latest)}
   function paintHead(){const c=done.filter(Boolean).length;count.textContent=`正式组 ${c} / ${total}`;count.classList.toggle('complete',c===total)}
   for(let i=0;i<total;i++){
+    const line=document.createElement('div');line.className='work-set-row';
     const b=document.createElement('button');b.type='button';b.className='work-set-btn';
+    const rpe=document.createElement('input');rpe.type='number';rpe.inputMode='decimal';rpe.min='1';rpe.max='10';rpe.step='0.5';rpe.placeholder='RPE';rpe.className='set-rpe';rpe.value=rpes[i];
     function paint(){b.classList.toggle('done',done[i]);b.textContent=done[i]?`第${i+1}组 ×${repsBySet[i]} ✓`:`第${i+1}组 ×${repsBySet[i]}`}
-    b.onclick=()=>{done[i]=!done[i];paint();paintHead();save();if(done[i])notifySession(row);syncSection(row)};
-    grid.appendChild(b);paint();
+    b.onclick=()=>{done[i]=!done[i];paint();paintHead();saveDone();if(done[i])notifySession(row);syncSection(row)};
+    rpe.oninput=()=>{let v=rpe.value;if(v!==''&&Number.isFinite(Number(v))){const num=Math.max(1,Math.min(10,Number(v)));v=String(num);rpes[i]=v}else rpes[i]='';saveRpes()};
+    line.append(b,rpe);grid.appendChild(line);buttons.push(b);paint();
   }
-  paintHead();save();syncSection(row);
+  const noteWrap=document.createElement('div');noteWrap.className='set-note-wrap';
+  const noteInput=document.createElement('input');noteInput.type='text';noteInput.placeholder='备注';noteInput.className='set-note';noteInput.value=note||'';
+  noteInput.oninput=()=>{note=noteInput.value;localStorage.setItem(noteKey,note);syncLegacyField(oldInputs[2],note)};
+  noteWrap.appendChild(noteInput);box.appendChild(noteWrap);
+  if(oldFields)body.insertBefore(box,oldFields);else body.appendChild(box);
+  paintHead();saveDone();saveRpes();localStorage.setItem(noteKey,note||'');syncSection(row);
 }
 function warmupRow(box){let n=box.nextElementSibling;while(n&&!n.classList.contains('exercise'))n=n.nextElementSibling;return n&&n.classList.contains('exercise')?n:null}
 function addWarmupTracker(box){
