@@ -1,57 +1,138 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#111827">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
 <title>12周举重训练计划</title>
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--good:#166534;--goodbg:#dcfce7}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}header{position:sticky;top:0;z-index:5;padding:18px 16px 10px;background:rgba(246,247,251,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}h1{font-size:22px;margin:0 0 6px}.sub,.small{font-size:12px;color:var(--muted)}.wrap{max-width:760px;margin:auto;padding:14px 14px 90px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}.row,.weektitle{display:flex;gap:10px;align-items:center;justify-content:space-between}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;background:#fff}button{border:0;border-radius:12px;padding:10px 12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);font-size:14px}.primary{background:#111827;color:#fff}.toolbar{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.toolbar button.active{background:#111827;color:#fff}.tabdate{display:block;font-size:10px;opacity:.75}.exercise{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:10px 0;border-bottom:1px dashed #eee}.exercise:last-child{border-bottom:0}.exercise input[type=checkbox]{width:22px;height:22px;margin-top:2px}.done{background:var(--goodbg)}.done .name{text-decoration:line-through;color:var(--good)}.name{font-weight:650}.rx{font-size:14px;color:#374151;margin-top:2px}.calc{font-size:13px;color:#0f766e;font-weight:600;margin-top:3px}.fields{display:grid;grid-template-columns:1fr 80px 1fr;gap:8px;margin-top:8px}.tag{display:inline-block;font-size:11px;font-weight:700;padding:4px 7px;border-radius:999px;background:#f3f4f6;margin-top:10px}.choice{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa;margin:8px 0}.daydate{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}.progress div{height:100%;background:#111827}.footer{position:fixed;bottom:0;left:0;right:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);border-top:1px solid var(--line)}.footer .row{max-width:760px;margin:auto}.footer button{flex:1}@media(min-width:640px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:520px){.fields{grid-template-columns:1fr 70px}.fields input:last-child{grid-column:1/-1}.row.date{align-items:end}}
+:root{
+  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#111827;--good:#166534;--goodbg:#dcfce7;--warn:#92400e;--warnbg:#fef3c7;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:5;background:rgba(246,247,251,.92);backdrop-filter:blur(14px);padding:18px 16px 10px;border-bottom:1px solid var(--line)}
+h1{font-size:22px;margin:0 0 6px}
+.sub{font-size:13px;color:var(--muted)}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 90px}
+.toolbar{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
+button,.pill{border:0;border-radius:12px;padding:10px 12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:14px}
+button.active{background:var(--accent);color:white}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.weektitle{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.weektitle h2{font-size:19px;margin:0}
+.badge{font-size:12px;padding:5px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
+.day{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.day:first-of-type{border-top:0}
+.day h3{margin:0 0 8px;font-size:16px}
+.exercise{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:9px 0;border-bottom:1px dashed #eee}
+.exercise:last-child{border-bottom:0}
+input[type=checkbox]{width:22px;height:22px;margin-top:2px}
+.exname{font-weight:650}
+.prescription{font-size:14px;color:#374151;margin-top:2px}
+.fields{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:8px}
+.fields input,.notes,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px;background:#fff}
+.notes{margin-top:8px;min-height:40px;resize:vertical}
+.done{background:var(--goodbg)}
+.done .exname{color:var(--good);text-decoration:line-through}
+.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:8px 0 2px}
+.progress>div{height:100%;background:#111827;width:0}
+.small{font-size:12px;color:var(--muted)}
+.rules li{margin:7px 0;line-height:1.35}
+.footerbar{position:fixed;bottom:0;left:0;right:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid var(--line);backdrop-filter:blur(14px)}
+.footerbar .inner{max-width:760px;margin:auto;display:flex;gap:8px}
+.footerbar button{flex:1}
+.primary{background:#111827;color:#fff}
+.danger{color:#991b1b}
+.hidden{display:none!important}
+@media (min-width:640px){.fields{grid-template-columns:1fr 100px 1fr}.notes{margin-top:0}}
+
+.maxgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.maxbox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.maxbox input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;background:#fff}
+.applyrow{display:flex;gap:8px;margin-top:10px}
+.applyrow button{flex:1}
+.calc{font-size:13px;color:#0f766e;margin-top:3px;font-weight:600}
+@media (min-width:640px){.maxgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+
+.sectiontag{display:inline-block;font-size:11px;font-weight:700;padding:4px 7px;border-radius:999px;background:#f3f4f6;color:#374151;margin-bottom:6px}
+.choicebox{margin:8px 0 12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa}
+.choicebox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.choicebox select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;background:#fff}
+.helper{font-size:12px;color:var(--muted);margin-top:4px}
+
+
+.schedrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin-top:10px}
+.schedrow label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.schedrow input[type=date]{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:16px;background:#fff}
+.datehint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.4}
+.daydate{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
+.tabdate{display:block;font-size:10px;opacity:.75;margin-top:2px}
+button.week-complete{background:#dcfce7;color:#166534;border:1px solid #86efac}
+button.week-complete.active{background:#166534;color:#fff}
+.cycle-complete{border-color:#86efac;background:#f0fdf4}
+.cycle-progress-label{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cycle-progress-label strong{font-size:17px}
+@media (max-width:460px){.schedrow{grid-template-columns:1fr}.schedrow button{width:100%}}
+
 </style>
 </head>
 <body>
-<header><h1>12周举重专项深蹲 + 抓挺</h1><div class="sub" id="summary"></div></header>
+<header>
+  <h1>12周举重专项深蹲 + 抓挺</h1>
+  <div class="sub" id="maxSummary">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
+</header>
+
 <div class="wrap">
-<div class="card"><div class="weektitle"><div><b>训练 Max</b><div class="small">改完后应用，整套 12 周计划自动重算。</div></div><span class="small">Auto</span></div><div class="grid"><div><label>Back Squat Max</label><input id="bs" type="number" step="0.5"></div><div><label>Front Squat Max</label><input id="fs" type="number" step="0.5"></div><div><label>Snatch Max</label><input id="sn" type="number" step="0.5"></div><div><label>Clean & Jerk Max</label><input id="cj" type="number" step="0.5"></div></div><div class="row" style="margin-top:10px"><button class="primary" id="applyMax">应用新 Max</button><button id="defaults">恢复默认</button></div></div>
-<div class="card"><div class="weektitle"><div><b>周期日期</b><div class="small">选择 Week 1 的周一；W1–W12 自动显示日期。</div></div><span class="small">Calendar</span></div><div class="row date" style="margin-top:10px"><div style="flex:1"><label>Week 1 周一</label><input id="start" type="date"></div><button class="primary" id="applyDate">应用日期</button></div><div class="small" id="dateHint" style="margin-top:8px"></div></div>
-<div class="toolbar" id="tabs"></div>
-<div class="card"><div class="weektitle"><div><b id="weekTitle"></b><div class="small" id="phase"></div></div><span class="small" id="pct"></span></div><div class="progress"><div id="bar"></div></div></div>
-<div id="content"></div>
-<div class="card"><b>周期规则</b><ul><li>周一重后蹲第一优先，周五重前蹲第二优先。</li><li>暂停后蹲是辅助，不做成第二个重后蹲日。</li><li>周二/周四：抓举 / 挺举二选一；宽拉 / 窄拉二选一。</li><li>周二以速度、位置、0 miss 为主；周四可以重，但不强制 max。</li><li>Heavy single 控制 RPE 8–9，不做极限 grind。</li></ul></div>
-</div>
-<div class="footer"><div class="row"><button id="home">本周</button><button class="primary" id="export">导出记录</button><button id="reset">重置本周</button></div></div>
-<script>
-const P=[
-['积累',[82.5,'5×4',70,'4×3'],[77.5,'4×4',72.5,'5×3'],['65–70% ×5×2','65–70% ×4×1–2'],['75–80% ×4–5 singles','75–80% ×4 singles']],
-['积累',[85,'5×4',72.5,'3×4'],[82.5,'5×3',75,'3×5'],['68–72% ×5×2','68–72% ×4×1–2'],['80–83% ×4 singles','80–83% ×4 singles']],
-['积累',[87.5,'5×4',75,'3×4'],[85,'5×3',77.5,'3×5'],['70–75% ×5×2','70–75% ×4×1–2'],['82–85% ×4 singles','82–85% ×4 singles']],
-['Deload',[77.5,'3×3',65,'2×3'],[72.5,'3×3',67.5,'2×4'],['60–65% ×4×2','60–65% ×3–4 singles'],['65–70% ×3 singles','65–70% ×3 singles']],
-['力量',[90,'5×3',77.5,'3×3'],[85,'4×3',80,'3×4'],['72–75% ×5×2','72–75% ×4 singles'],['85% ×3–4 singles','85% ×3 singles']],
-['力量',[92.5,'5×3',80,'3×3'],[87.5,'4×3',82.5,'3×4'],['75–78% ×4×2','75–80% ×4 singles'],['87–88% ×3 singles','87–88% ×3 singles']],
-['力量',['100–102.5','1 + 92.5–95 3×3',80,'3×3'],[90,'4×2',85,'3×4'],['78–82% ×4×1–2','78–82% ×4 singles'],['88–90% ×2–3 singles','88–90% ×2–3 singles']],
-['Deload',[80,'3×3',67.5,'2×3'],[75,'3×3',70,'2×4'],['60–70% ×3–4×1–2','60–70% ×3 singles'],['65–70% ×3 singles','65–70% ×3 singles']],
-['强化',[105,'1 + 95 3×2',82.5,'3×2'],[90,'3×2',82.5,'3×3'],['75–80% ×4 singles','75–80% ×4 singles'],['90–92% ×2–3 singles','90–92% ×2–3 singles']],
-['强化',[107.5,'1 + 97.5 3×2',85,'3×2'],[92.5,'3×2',85,'3×3'],['75–80% ×3–4 singles','75–80% ×3–4 singles'],['92–94% ×1–2 singles','92–94% ×1–2 singles']],
-['峰值',[110,'1 + 97.5–100 2×2',87.5,'2×2'],[95,'1 + 90 2×2',85,'2×3'],['70–75% ×3–4 singles','70–75% ×3 singles'],['90–95% ×1–2 singles','90–95% ×1–2 singles']],
-['Test',['PR','117.5 → 120 → 122.5 可选','',''],['70–75','2×2','','不做'],['60–70% ×3 singles','60–70% ×2–3 singles'],['70→80→87→92→95→PR','70→80→87→92→95→PR']]
-];
-const $=id=>document.getElementById(id),S=(k,v)=>localStorage.setItem(k,v),L=k=>localStorage.getItem(k)||'',r25=x=>Math.round(x/2.5)*2.5;
-let M={bs:+L('wl_max_bs')||112,fs:+L('wl_max_fs')||100,sn:+L('wl_max_sn')||0,cj:+L('wl_max_cj')||0},W=+L('wl_current_week')||1,START=L('wl_program_start');
-function pd(s){let m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):null}function ad(d,n){let x=new Date(d);x.setUTCDate(x.getUTCDate()+n);return x}function fd(d,y=false){if(!d)return'';return y?`${d.getUTCFullYear()}年${d.getUTCMonth()+1}月${d.getUTCDate()}日`:`${d.getUTCMonth()+1}/${d.getUTCDate()}`}function ws(w){let d=pd(START);return d?ad(d,(w-1)*7):null}function wr(w){let d=ws(w);return d?`${fd(d)}–${fd(ad(d,6))}`:''}function td(w,day){let d=ws(w),o={'周一':0,'周二':1,'周四':3,'周五':4};return d?ad(d,o[day]):null}
-function sc(v,t){if(typeof v!=='number')return v;return r25(v*M[t]/(t==='bs'?112:100))}function pc(t,mx){let x=t.match(/(\d+(?:\.\d+)?)(?:–(\d+(?:\.\d+)?))?%/);if(!x||!mx)return'';let a=r25(mx*+x[1]/100),b=r25(mx*+(x[2]||x[1])/100);return a===b?`≈ ${a} kg`:`≈ ${a}–${b} kg`}
-function node(tag,cls,text){let e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}function tag(card,text){card.appendChild(node('div','tag',text))}
-function updateHead(){$('summary').textContent=`BS ${M.bs} kg · FS ${M.fs} kg${M.sn?` · Snatch ${M.sn} kg`:''}${M.cj?` · C&J ${M.cj} kg`:''}`;$('dateHint').textContent=START?`Week 1：${fd(ws(1),true)} · Week 12：${fd(ws(12),true)}–${fd(ad(ws(12),6),true)}`:'未设置开始日期。'}
-function ex(card,day,name,rx,id,calc=''){let done=L(id+'_d')==='1',row=node('div','exercise'+(done?' done':''));let cb=document.createElement('input');cb.type='checkbox';cb.autocomplete='off';cb.checked=done;let body=node('div');body.appendChild(node('div','name',name));body.appendChild(node('div','rx',rx));if(calc)body.appendChild(node('div','calc',calc));let f=node('div','fields'),a=document.createElement('input'),r=document.createElement('input'),n=document.createElement('input');a.placeholder='实际重量/完成情况';r.placeholder='RPE';n.placeholder='备注';a.value=L(id+'_a');r.value=L(id+'_r');n.value=L(id+'_n');f.append(a,r,n);body.appendChild(f);row.append(cb,body);card.appendChild(row);cb.addEventListener('change',()=>{S(id+'_d',cb.checked?'1':'0');row.classList.toggle('done',cb.checked);progress()});a.addEventListener('input',()=>S(id+'_a',a.value));r.addEventListener('input',()=>S(id+'_r',r.value));n.addEventListener('input',()=>S(id+'_n',n.value))}
-function selectBox(card,label,key,opts){let v=L(key)||Object.keys(opts)[0],box=node('div','choice'),lab=node('label','',label),sel=document.createElement('select');sel.autocomplete='off';for(let [val,text] of Object.entries(opts)){let o=document.createElement('option');o.value=val;o.textContent=text;o.selected=val===v;sel.appendChild(o)}box.append(lab,sel);card.appendChild(box);sel.addEventListener('change',()=>{S(key,sel.value);render()});return v}
-function id(w,d,s,i){return`wl_${w}_${d}_${s}${i}`}
-function progress(){let total=0,done=0,p=P[W-1];for(let day of ['周一','周二','周四','周五']){if(day==='周一'){for(let i=0;i<4;i++){total++;let k=id(W,day,i<2?'m':'a',i<2?i:i-2);if(L(k+'_d')==='1')done++}}else if(day==='周五'){for(let i=0;i<4;i++){total++;let k=id(W,day,i<2?'m':'a',i<2?i:i-2);if(L(k+'_d')==='1')done++}}else{for(let [s,i] of [['cm',0],['cp',0],['a',0]]){total++;if(L(id(W,day,s,i)+'_d')==='1')done++}}}let q=total?Math.round(done/total*100):0;$('bar').style.width=q+'%';$('pct').textContent=`${done}/${total} · ${q}%`}
-function renderTabs(){$('tabs').innerHTML='';P.forEach((_,i)=>{let b=document.createElement('button');b.className=i+1===W?'active':'';b.innerHTML=`W${i+1}${wr(i+1)?`<span class="tabdate">${wr(i+1)}</span>`:''}`;b.addEventListener('click',()=>{W=i+1;S('wl_current_week',W);render()});$('tabs').appendChild(b)})}
-function render(){updateHead();renderTabs();let p=P[W-1];$('weekTitle').textContent=`Week ${W}${wr(W)?' · '+wr(W):''}`;$('phase').textContent='阶段：'+p[0];$('content').innerHTML='';for(let day of ['周一','周二','周四','周五']){let c=node('div','card'),h=node('h3');h.innerHTML=`${day}${td(W,day)?`<span class="daydate">${fd(td(W,day),true)}</span>`:''}`;c.appendChild(h);if(day==='周一'){tag(c,'主项');let a=p[1];ex(c,day,'Back Squat',`${sc(a[0],'bs')} kg · ${a[1]}`,id(W,day,'m',0));ex(c,day,'Front Squat',`${sc(a[2],'fs')} kg · ${a[3]}`,id(W,day,'m',1));tag(c,'辅助');ex(c,day,'Heavy Walkout / 预蹲',(W===4||W===8)?'可省略':'1–2组，重重量支撑',id(W,day,'a',0));ex(c,day,'Back Extension / 山羊挺身',(W===4||W===8)?'2组轻量':'3组',id(W,day,'a',1))}else if(day==='周五'){tag(c,'主项');let a=p[2];ex(c,day,'Front Squat',`${sc(a[0],'fs')} kg · ${a[1]}`,id(W,day,'m',0));ex(c,day,'Paused Back Squat',`${sc(a[2],'bs')} kg · ${a[3]}`,id(W,day,'m',1));tag(c,'辅助');ex(c,day,'Pull-up / 引体向上',(W===4||W===8)?'2组轻量':'3组',id(W,day,'a',0));ex(c,day,'Rear Delt Fly / 飞鸟',(W===4||W===8)?'2组轻量':'3组',id(W,day,'a',1))}else{tag(c,'主项二选一');let ci=day==='周二'?3:4,key=`wl_${W}_${day}_mainChoice`,ch=selectBox(c,'今天主项',key,{sn:'抓举 Snatch',cj:'挺举 Clean & Jerk'}),name=ch==='sn'?'Snatch':'Clean & Jerk',rx=p[ci][ch==='sn'?0:1];ex(c,day,name,rx,id(W,day,'cm',0),pc(rx,ch==='sn'?M.sn:M.cj));tag(c,'拉二选一');let pk=`wl_${W}_${day}_pullChoice`,pu=selectBox(c,'今天拉',pk,{wide:'宽拉 Snatch Pull',narrow:'窄拉 Clean Pull'}),pn=pu==='wide'?'Wide Pull / 宽拉':'Narrow Pull / 窄拉';ex(c,day,pn,(W===4||W===8)?'2组轻量':(W===12?'不做':'3组'),id(W,day,'cp',0));tag(c,'辅助');let an=day==='周二'?'Barbell Row / 杠铃划船':'Dips / 双杠臂屈伸';ex(c,day,an,(W===4||W===8)?'2组轻量':(W===12?'不做或极轻':'3组'),id(W,day,'a',0))}$('content').appendChild(c)}progress()}
-$('applyMax').addEventListener('click',()=>{let bs=+$('bs').value,fs=+$('fs').value,sn=+$('sn').value||0,cj=+$('cj').value||0;if(bs<=0||fs<=0)return alert('BS / FS Max 需要大于 0');M={bs,fs,sn,cj};for(let k of ['bs','fs','sn','cj'])S('wl_max_'+k,M[k]);render()});$('defaults').addEventListener('click',()=>{M={bs:112,fs:100,sn:0,cj:0};for(let k in M){S('wl_max_'+k,M[k]);$(k).value=M[k]||''}render()});$('applyDate').addEventListener('click',()=>{if(!pd($('start').value))return alert('请选择有效日期');START=$('start').value;S('wl_program_start',START);render()});$('home').addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})});$('reset').addEventListener('click',()=>{if(!confirm(`确定重置 Week ${W}？`))return;let pre=`wl_${W}_`;Object.keys(localStorage).filter(k=>k.startsWith(pre)).forEach(k=>localStorage.removeItem(k));render()});$('export').addEventListener('click',()=>{let out='12周举重训练记录\n';for(let w=1;w<=12;w++)out+=`W${w}${wr(w)?' '+wr(w):''}\n`;let b=new Blob([out],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='12周举重训练记录.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});
-for(let k of ['bs','fs','sn','cj'])$(k).value=M[k]||'';$('start').value=START;render();window.addEventListener('pageshow',()=>setTimeout(render,80));
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script>
-</body></html>
+  <div class="card">
+    <div class="weektitle">
+      <div>
+        <h2 style="font-size:18px">训练 Max</h2>
+        <div class="small">改完后点“应用新 Max”，整套 12 周计划会自动重算。</div>
+      </div>
+      <span class="badge">Auto</span>
+    </div>
+    <div class="maxgrid">
+      <div class="maxbox"><label>Back Squat Max (kg)</label><input id="maxBS" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Front Squat Max (kg)</label><input id="maxFS" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Snatch Max (kg)</label><input id="maxSN" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Clean & Jerk Max (kg)</label><input id="maxCJ" type="number" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="applyrow">
+      <button class="primary" onclick="applyMaxes()">应用新 Max</button>
+      <button onclick="restoreDefaultMaxes()">恢复默认 112 / 100</button>
+    </div>
+    <div class="small" style="margin-top:8px">深蹲重量按原计划相对强度缩放并四舍五入至 2.5 kg；抓挺百分比会额外显示换算公斤数。</div>
+  </div>
+
+  <div class="card">
+    <div class="weektitle">
+      <div>
+        <h2 style="font-size:18px">周期日期</h2>
+        <div class="small">选择 Week 1 的周一；W1–W12 和每天训练都会自动显示日期。</div>
+      </div>
+      <span class="badge">Calendar</span>
+    </div>
+    <div class="schedrow">
+      <div>
+        <label for="programStart">Week 1 周一</label>
+        <input id="programStart" type="date">
+      </div>
+      <button class="primary" id="applyStartDate" type="button">应用日期</button>
+    </div>
+    <div class="datehint" id="scheduleHint">未设置开始日期。</div>
+  </div>
+
+  <div class="card" id="cycleProgressCard">
+    <div class="cycle-progress-label">
+      <div>
+        <strong>12周周期进度</strong>
+        <div class="small">整周所有项目都打勾后，该周才计为完成。</div>
+      </div>
+      <span class="badge" id="c
