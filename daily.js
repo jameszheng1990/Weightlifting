@@ -1,0 +1,30 @@
+(()=>{
+const DAYS=['周一','周二','周三','周四','周五','周六','周日'];
+const OFFSETS={'周一':0,'周二':1,'周三':2,'周四':3,'周五':4,'周六':5,'周日':6};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+let busy=false;
+function weekNum(){try{return Number(currentWeek)||Number(localStorage.getItem('wl_current_week')||1)}catch(e){return Number(localStorage.getItem('wl_current_week')||1)}}
+function dayKey(day,suffix){return `wl_daily_${weekNum()}_${day}_${suffix}`}
+function getBool(day,suffix){return localStorage.getItem(dayKey(day,suffix))==='1'}
+function setBool(day,suffix,v){localStorage.setItem(dayKey(day,suffix),v?'1':'0')}
+function loadCardio(day){try{const x=JSON.parse(localStorage.getItem(dayKey(day,'cardio'))||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}}
+function saveCardio(day,x){localStorage.setItem(dayKey(day,'cardio'),JSON.stringify(x))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function dateText(day){try{const d=weekStartDate(weekNum());if(!d)return'';return fmtDate(addDaysUTC(d,OFFSETS[day]),false)}catch(e){return''}}
+function fullDateText(day){try{const d=weekStartDate(weekNum());if(!d)return'';return fmtDate(addDaysUTC(d,OFFSETS[day]),true)}catch(e){return''}}
+function getDayCard(day){return $$('#content>.card').find(c=>{const h=$('h3',c);return h&&(h.textContent||'').trim().startsWith(day)})||null}
+function ensureRestCard(day){let card=getDayCard(day);if(card)return card;card=document.createElement('div');card.className='card daily-rest-card';card.dataset.dailyDay=day;const h=document.createElement('h3');h.style.marginTop='0';h.innerHTML=`${day}${fullDateText(day)?`<span class="daydate">${fullDateText(day)}</span>`:''}`;card.appendChild(h);$('#content')?.appendChild(card);return card}
+function trainingComplete(day){const card=getDayCard(day);if(!card)return true;const rows=$$('.exercise',card);if(!rows.length)return true;return rows.every(row=>{const cb=[...row.children].find(x=>x instanceof HTMLInputElement&&x.type==='checkbox');return !!cb?.checked})}
+function dayComplete(day){return trainingComplete(day)&&getBool(day,'stretch')&&getBool(day,'creatine')}
+function selectedDay(){return localStorage.getItem(`wl_selected_day_${weekNum()}`)||'周一'}
+function setSelectedDay(day){localStorage.setItem(`wl_selected_day_${weekNum()}`,day)}
+function renderTabs(){let tabs=$('#dayTabs');if(!tabs){tabs=document.createElement('div');tabs.id='dayTabs';tabs.className='day-tabs';$('#content')?.insertAdjacentElement('beforebegin',tabs)}tabs.innerHTML='';const selected=selectedDay();DAYS.forEach(day=>{const b=document.createElement('button');b.type='button';b.className='day-tab';if(day===selected)b.classList.add('active');if(dayComplete(day))b.classList.add('day-complete');b.innerHTML=`<span>${day}</span>${dateText(day)?`<small>${dateText(day)}</small>`:''}`;b.onclick=()=>{setSelectedDay(day);applyDayView();renderTabs()};tabs.appendChild(b)})}
+function renderWellness(day,card){let box=$('.daily-wellness',card);if(!box){box=document.createElement('div');box.className='daily-wellness';card.appendChild(box)}const cardio=loadCardio(day);box.innerHTML=`<div class="daily-wellness-title"><b>每日记录</b><button type="button" class="add-cardio">＋ 添加有氧</button></div><div class="cardio-list"></div><div class="daily-checks"><label><input type="checkbox" class="stretch-check" ${getBool(day,'stretch')?'checked':''}> 拉伸</label><label><input type="checkbox" class="creatine-check" ${getBool(day,'creatine')?'checked':''}> 肌酸</label></div>`;
+const list=$('.cardio-list',box);
+function drawCardio(){list.innerHTML='';const rows=loadCardio(day);if(!rows.length){const e=document.createElement('div');e.className='cardio-empty';e.textContent='今天还没有有氧记录。';list.appendChild(e);return}rows.forEach((item,i)=>{const r=document.createElement('div');r.className='cardio-row';r.innerHTML=`<div class="cardio-label">有氧 ${i+1}</div><label>时间<input inputmode="decimal" type="number" min="0" step="1" placeholder="min" value="${esc(item.min||'')}"></label><label>距离<input inputmode="decimal" type="number" min="0" step="0.01" placeholder="miles" value="${esc(item.miles||'')}"></label><button type="button" class="cardio-delete">删除</button>`;const ins=$$('input',r);ins[0].oninput=()=>{const a=loadCardio(day);if(a[i]){a[i].min=ins[0].value;saveCardio(day,a)}};ins[1].oninput=()=>{const a=loadCardio(day);if(a[i]){a[i].miles=ins[1].value;saveCardio(day,a)}};$('.cardio-delete',r).onclick=()=>{const a=loadCardio(day);a.splice(i,1);saveCardio(day,a);drawCardio()};list.appendChild(r)})}
+drawCardio();$('.add-cardio',box).onclick=()=>{const a=loadCardio(day);a.push({min:'',miles:''});saveCardio(day,a);drawCardio()};$('.stretch-check',box).onchange=e=>{setBool(day,'stretch',e.target.checked);renderTabs()};$('.creatine-check',box).onchange=e=>{setBool(day,'creatine',e.target.checked);renderTabs()}}
+function applyDayView(){if(busy)return;busy=true;const selected=selectedDay();DAYS.forEach(day=>ensureRestCard(day));DAYS.forEach(day=>{const c=getDayCard(day);if(!c)return;renderWellness(day,c);c.classList.toggle('daily-day-hidden',day!==selected)});renderTabs();busy=false}
+function updateColors(){renderTabs()}
+function init(){const root=$('#content');if(!root)return;applyDayView();new MutationObserver(m=>{if(busy)return;const direct=m.some(x=>x.target===root);if(!direct)return;setTimeout(applyDayView,40)}).observe(root,{childList:true,subtree:false});root.addEventListener('change',e=>{if(e.target instanceof HTMLInputElement&&e.target.type==='checkbox'&&e.target.closest('.exercise'))setTimeout(updateColors,20)})}
+window.addEventListener('DOMContentLoaded',()=>setTimeout(init,220));window.addEventListener('pageshow',()=>setTimeout(()=>{applyDayView()},260));
+})();
