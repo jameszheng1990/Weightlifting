@@ -4,8 +4,15 @@
 .set-tracker-top,.warmup-record-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .set-tracker-count,.warmup-record-head>span:first-child{font-size:13px;font-weight:800}
 .set-tracker-count.complete{color:var(--good)}
-.work-set-buttons,.warmup-set-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:9px}
+.work-set-rows{display:grid;gap:8px;margin-top:9px}
+.work-set-row{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:8px;align-items:center}
 .work-set-btn,.warmup-set-btn{min-height:44px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 8px;font-size:13px;font-weight:800;box-shadow:none}
 .work-set-btn.done,.warmup-set-btn.done{background:#dcfce7;border-color:#86efac;color:#166534}
+.set-rpe,.set-note{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;font-size:14px}
+.set-rpe{text-align:center}
+.set-note-wrap{margin-top:8px}
+.fields.fields-settracker{grid-template-columns:minmax(0,1fr)!important}
+.fields.fields-settracker .legacy-hidden-field{display:none!important}
+.warmup-set-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:9px}
 .warmup-record{margin:7px 0 10px;padding:10px;border:1px solid #dbe3ee;border-radius:12px;background:#fff}
-@media(max-width:560px){.work-set-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.warmup-set-buttons{grid-template-columns:1fr}.work-set-btn,.warmup-set-btn{min-height:48px;font-size:14px}}
+@media(max-width:560px){.warmup-set-buttons{grid-template-columns:1fr}.work-set-row{grid-template-columns:minmax(0,1fr) 78px}.work-set-btn,.warmup-set-btn,.set-rpe,.set-note{min-height:48px;font-size:14px}}
