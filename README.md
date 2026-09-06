@@ -1,20 +1,18 @@
-# 12周举重训练 App
+# 12周举重训练 App v4
 
-## GitHub Pages 部署
-1. 在 GitHub 新建一个 repository，例如 `weightlifting-plan`
-2. 把这个文件夹里的所有文件上传到仓库根目录：
-   - index.html
-   - manifest.webmanifest
-   - sw.js
-   - icon.svg
-3. 打开仓库 Settings → Pages
-4. Build and deployment 选择：
-   - Source: Deploy from a branch
-   - Branch: main
-   - Folder: / (root)
-5. 保存后，GitHub 会给你一个 Pages 地址。
-6. 用 iPhone Safari 打开该地址 → 分享 → 添加到主屏幕。
+新增：
+- 周一辅助：大重量预蹲、山羊挺身
+- 周二辅助：杠铃划船
+- 周四辅助：双杠臂屈伸
+- 周五辅助：引体向上、飞鸟
+- 周二/周四主项改为抓举 / 挺举二选一
+- 周二/周四拉改为宽拉 / 窄拉二选一
+- 选择项、勾选、实际重量、RPE、备注都会保存在浏览器本地
+- 保留顶部 Dynamic Max 自动重算
 
-训练记录保存在当前浏览器的 localStorage。
-如果更换浏览器、清除网站数据或换设备，记录不会自动同步。
-建议偶尔用 App 内的“导出记录”备份。
+更新 GitHub Pages：
+1. 解压 zip
+2. 上传并覆盖 repo 根目录的 index.html、sw.js、manifest.webmanifest、icon.svg
+3. Commit changes
+4. 等待 Pages 自动部署
+5. 强制刷新页面

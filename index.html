@@ -51,15 +51,52 @@ input[type=checkbox]{width:22px;height:22px;margin-top:2px}
 .danger{color:#991b1b}
 .hidden{display:none!important}
 @media (min-width:640px){.fields{grid-template-columns:1fr 100px 1fr}.notes{margin-top:0}}
+
+.maxgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.maxbox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.maxbox input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;background:#fff}
+.applyrow{display:flex;gap:8px;margin-top:10px}
+.applyrow button{flex:1}
+.calc{font-size:13px;color:#0f766e;margin-top:3px;font-weight:600}
+@media (min-width:640px){.maxgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+
+.sectiontag{display:inline-block;font-size:11px;font-weight:700;padding:4px 7px;border-radius:999px;background:#f3f4f6;color:#374151;margin-bottom:6px}
+.choicebox{margin:8px 0 12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa}
+.choicebox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.choicebox select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;background:#fff}
+.helper{font-size:12px;color:var(--muted);margin-top:4px}
+
 </style>
 </head>
 <body>
 <header>
   <h1>12周举重专项深蹲 + 抓挺</h1>
-  <div class="sub">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
+  <div class="sub" id="maxSummary">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
 </header>
 
 <div class="wrap">
+  <div class="card">
+    <div class="weektitle">
+      <div>
+        <h2 style="font-size:18px">训练 Max</h2>
+        <div class="small">改完后点“应用新 Max”，整套 12 周计划会自动重算。</div>
+      </div>
+      <span class="badge">Auto</span>
+    </div>
+    <div class="maxgrid">
+      <div class="maxbox"><label>Back Squat Max (kg)</label><input id="maxBS" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Front Squat Max (kg)</label><input id="maxFS" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Snatch Max (kg)</label><input id="maxSN" type="number" step="0.5" inputmode="decimal"></div>
+      <div class="maxbox"><label>Clean & Jerk Max (kg)</label><input id="maxCJ" type="number" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="applyrow">
+      <button class="primary" onclick="applyMaxes()">应用新 Max</button>
+      <button onclick="restoreDefaultMaxes()">恢复默认 112 / 100</button>
+    </div>
+    <div class="small" style="margin-top:8px">深蹲重量按原计划相对强度缩放并四舍五入至 2.5 kg；抓挺百分比会额外显示换算公斤数。</div>
+  </div>
+
   <div class="toolbar" id="weekTabs"></div>
 
   <div class="card">
@@ -82,7 +119,7 @@ input[type=checkbox]{width:22px;height:22px;margin-top:2px}
       <li>周一 Heavy Back Squat 是深蹲 progression 第一优先。</li>
       <li>周五 Heavy Front Squat 是第二优先。</li>
       <li>Paused Back Squat 永远是辅助，不做成第二个重后蹲日。</li>
-      <li>周二抓挺以速度、位置和 0 miss 为主。</li>
+      <li>周二/周四主项均为抓举或挺举二选一；再从宽拉/窄拉里二选一。</li><li>周二主项以速度、位置和 0 miss 为主。</li>
       <li>周四可以重，但百分比是范围，不是命令。</li>
       <li>Heavy single 目标 RPE 8–9，不做极限 grind。</li>
       <li>恢复差：先减周五暂停蹲 1 组，再减周一辅助前蹲 1 组。</li>
@@ -99,69 +136,141 @@ input[type=checkbox]{width:22px;height:22px;margin-top:2px}
 </div>
 
 <script>
+
+const DEFAULT_MAXES={bs:112,fs:100,sn:0,cj:0};
+let trainingMaxes={
+  bs:Number(localStorage.getItem("wl_max_bs")||DEFAULT_MAXES.bs),
+  fs:Number(localStorage.getItem("wl_max_fs")||DEFAULT_MAXES.fs),
+  sn:Number(localStorage.getItem("wl_max_sn")||DEFAULT_MAXES.sn),
+  cj:Number(localStorage.getItem("wl_max_cj")||DEFAULT_MAXES.cj)
+};
+function round25(x){return Math.round(x/2.5)*2.5}
+function fmtKg(x){
+  if(!Number.isFinite(x)) return "";
+  return (Math.round(x*10)%10===0?Math.round(x):x.toFixed(1))+" kg";
+}
+function initMaxInputs(){
+  document.getElementById("maxBS").value=trainingMaxes.bs||"";
+  document.getElementById("maxFS").value=trainingMaxes.fs||"";
+  document.getElementById("maxSN").value=trainingMaxes.sn||"";
+  document.getElementById("maxCJ").value=trainingMaxes.cj||"";
+  updateMaxSummary();
+}
+function updateMaxSummary(){
+  const sn=trainingMaxes.sn?` · Snatch ${trainingMaxes.sn} kg`:"";
+  const cj=trainingMaxes.cj?` · C&J ${trainingMaxes.cj} kg`:"";
+  document.getElementById("maxSummary").textContent=`BS ${trainingMaxes.bs} kg · FS ${trainingMaxes.fs} kg${sn}${cj} · 12周自动计划`;
+}
+function applyMaxes(){
+  const bs=Number(document.getElementById("maxBS").value);
+  const fs=Number(document.getElementById("maxFS").value);
+  const sn=Number(document.getElementById("maxSN").value)||0;
+  const cj=Number(document.getElementById("maxCJ").value)||0;
+  if(!(bs>0) || !(fs>0)){alert("Back Squat 和 Front Squat Max 需要大于 0");return}
+  trainingMaxes={bs,fs,sn,cj};
+  localStorage.setItem("wl_max_bs",bs);
+  localStorage.setItem("wl_max_fs",fs);
+  localStorage.setItem("wl_max_sn",sn);
+  localStorage.setItem("wl_max_cj",cj);
+  updateMaxSummary(); render();
+}
+function restoreDefaultMaxes(){
+  trainingMaxes={...DEFAULT_MAXES};
+  ["bs","fs","sn","cj"].forEach(k=>localStorage.setItem("wl_max_"+k,trainingMaxes[k]));
+  initMaxInputs(); render();
+}
+function scaledPrescription(name, text){
+  let out=text;
+  const isBS=/Back Squat/i.test(name);
+  const isFS=/Front Squat/i.test(name);
+  if(isBS){
+    out=out.replace(/(\d+(?:\.\d+)?)(?:–(\d+(?:\.\d+)?))?\s*kg/g,(m,a,b)=>{
+      const a2=round25(Number(a)*trainingMaxes.bs/112);
+      if(b){const b2=round25(Number(b)*trainingMaxes.bs/112);return `${fmtKg(a2).replace(" kg","")}–${fmtKg(b2)}`}
+      return fmtKg(a2);
+    });
+  } else if(isFS){
+    out=out.replace(/(\d+(?:\.\d+)?)(?:–(\d+(?:\.\d+)?))?\s*kg/g,(m,a,b)=>{
+      const a2=round25(Number(a)*trainingMaxes.fs/100);
+      if(b){const b2=round25(Number(b)*trainingMaxes.fs/100);return `${fmtKg(a2).replace(" kg","")}–${fmtKg(b2)}`}
+      return fmtKg(a2);
+    });
+  }
+  return out;
+}
+function percentCalc(name,text){
+  const max=/Clean & Jerk/i.test(name)?trainingMaxes.cj:/Snatch/i.test(name)?trainingMaxes.sn:0;
+  if(!max) return "";
+  const match=text.match(/(\d+(?:\.\d+)?)\s*[–-]\s*(\d+(?:\.\d+)?)%|(\d+(?:\.\d+)?)%/);
+  if(!match) return "";
+  let lo,hi;
+  if(match[1]){lo=Number(match[1]);hi=Number(match[2])} else {lo=hi=Number(match[3])}
+  const a=round25(max*lo/100), b=round25(max*hi/100);
+  return a===b?`≈ ${fmtKg(a)}`:`≈ ${fmtKg(a)}–${fmtKg(b)}`;
+}
+
 const plan = [
 {phase:"积累",days:{
-"周一":[["Back Squat","82.5 kg × 5组 × 4次"],["Front Squat","70 kg × 4组 × 3次"]],
-"周二":[["Snatch","65–70% × 5组 × 2次"],["Clean & Jerk","65–70% × 4组 × 1–2次"]],
-"周四":[["Snatch","75–80% × 4–5个 single"],["Clean & Jerk","75–80% × 4个 single"]],
-"周五":[["Front Squat","77.5 kg × 4组 × 4次"],["Paused Back Squat","72.5 kg × 5组 × 3次，底部停2秒"]]}},
+"周一":{main:[["Back Squat","82.5 kg × 5组 × 4次"],["Front Squat","70 kg × 4组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"65–70% × 5组 × 2次",cj:"65–70% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"75–80% × 4–5个 single",cj:"75–80% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","77.5 kg × 4组 × 4次"],["Paused Back Squat","72.5 kg × 5组 × 3次，底部停2秒"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"积累",days:{
-"周一":[["Back Squat","85 kg × 5组 × 4次"],["Front Squat","72.5 kg × 3组 × 4次"]],
-"周二":[["Snatch","68–72% × 5组 × 2次"],["Clean & Jerk","68–72% × 4组 × 1–2次"]],
-"周四":[["Snatch","80–83% × 4个 single"],["Clean & Jerk","80–83% × 4个 single"]],
-"周五":[["Front Squat","82.5 kg × 5组 × 3次"],["Paused Back Squat","75 kg × 3组 × 5次"]]}},
+"周一":{main:[["Back Squat","85 kg × 5组 × 4次"],["Front Squat","72.5 kg × 3组 × 4次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"68–72% × 5组 × 2次",cj:"68–72% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"80–83% × 4个 single",cj:"80–83% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","82.5 kg × 5组 × 3次"],["Paused Back Squat","75 kg × 3组 × 5次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"积累",days:{
-"周一":[["Back Squat","87.5 kg × 5组 × 4次"],["Front Squat","75 kg × 3组 × 4次"]],
-"周二":[["Snatch","70–75% × 5组 × 2次"],["Clean & Jerk","70–75% × 4组 × 1–2次"]],
-"周四":[["Snatch","82–85% × 4个 single"],["Clean & Jerk","82–85% × 4个 single"]],
-"周五":[["Front Squat","85 kg × 5组 × 3次"],["Paused Back Squat","77.5 kg × 3组 × 5次"]]}},
+"周一":{main:[["Back Squat","87.5 kg × 5组 × 4次"],["Front Squat","75 kg × 3组 × 4次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"70–75% × 5组 × 2次",cj:"70–75% × 4组 × 1–2次"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"82–85% × 4个 single",cj:"82–85% × 4个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","85 kg × 5组 × 3次"],["Paused Back Squat","77.5 kg × 3组 × 5次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"Deload",days:{
-"周一":[["Back Squat","77.5 kg × 3组 × 3次"],["Front Squat","65 kg × 2组 × 3次"]],
-"周二":[["Snatch","60–65% × 4组 × 2次"],["Clean & Jerk","60–65% × 3–4个 single"]],
-"周四":[["Snatch","65–70% × 3个 single"],["Clean & Jerk","65–70% × 3个 single"]],
-"周五":[["Front Squat","72.5 kg × 3组 × 3次"],["Paused Back Squat","67.5 kg × 2组 × 4次"]]}},
+"周一":{main:[["Back Squat","77.5 kg × 3组 × 3次"],["Front Squat","65 kg × 2组 × 3次"]],assist:[["Heavy Walkout / 预蹲","可省略"],["Back Extension / 山羊挺身","2组轻量"]]},
+"周二":{choiceMain:{sn:"60–65% × 4组 × 2次",cj:"60–65% × 3–4个 single"},choicePull:"2组轻量",assist:[["Barbell Row / 杠铃划船","2组轻量"]]},
+"周四":{choiceMain:{sn:"65–70% × 3个 single",cj:"65–70% × 3个 single"},choicePull:"2组轻量",assist:[["Dips / 双杠臂屈伸","2组轻量"]]},
+"周五":{main:[["Front Squat","72.5 kg × 3组 × 3次"],["Paused Back Squat","67.5 kg × 2组 × 4次"]],assist:[["Pull-up / 引体向上","2组轻量"],["Rear Delt Fly / 飞鸟","2组轻量"]]}}},
 {phase:"力量",days:{
-"周一":[["Back Squat","90 kg × 5组 × 3次"],["Front Squat","77.5 kg × 3组 × 3次"]],
-"周二":[["Snatch","72–75% × 5组 × 2次"],["Clean & Jerk","72–75% × 4个 single"]],
-"周四":[["Snatch","85% × 3–4个 single"],["Clean & Jerk","85% × 3个 single"]],
-"周五":[["Front Squat","85 kg × 4组 × 3次"],["Paused Back Squat","80 kg × 3组 × 4次"]]}},
+"周一":{main:[["Back Squat","90 kg × 5组 × 3次"],["Front Squat","77.5 kg × 3组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"72–75% × 5组 × 2次",cj:"72–75% × 4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"85% × 3–4个 single",cj:"85% × 3个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","85 kg × 4组 × 3次"],["Paused Back Squat","80 kg × 3组 × 4次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"力量",days:{
-"周一":[["Back Squat","92.5 kg × 5组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],
-"周二":[["Snatch","75–78% × 4组 × 2次"],["Clean & Jerk","75–80% × 4个 single"]],
-"周四":[["Snatch","87–88% × 3个 single"],["Clean & Jerk","87–88% × 3个 single"]],
-"周五":[["Front Squat","87.5 kg × 4组 × 3次"],["Paused Back Squat","82.5 kg × 3组 × 4次"]]}},
+"周一":{main:[["Back Squat","92.5 kg × 5组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1–2组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"75–78% × 4组 × 2次",cj:"75–80% × 4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"87–88% × 3个 single",cj:"87–88% × 3个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","87.5 kg × 4组 × 3次"],["Paused Back Squat","82.5 kg × 3组 × 4次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"力量",days:{
-"周一":[["Back Squat Heavy Single","100–102.5 kg × 1，RPE 8–8.5"],["Back Squat Back-off","92.5–95 kg × 3组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],
-"周二":[["Snatch","78–82% × 4组 × 1–2次"],["Clean & Jerk","78–82% × 4个 single"]],
-"周四":[["Snatch","88–90% × 2–3个 single"],["Clean & Jerk","88–90% × 2–3个 single"]],
-"周五":[["Front Squat","90 kg × 4组 × 2次"],["Paused Back Squat","85 kg × 3组 × 4次"]]}},
+"周一":{main:[["Back Squat Heavy Single","100–102.5 kg × 1，RPE 8–8.5"],["Back Squat Back-off","92.5–95 kg × 3组 × 3次"],["Front Squat","80 kg × 3组 × 3次"]],assist:[["Heavy Walkout / 预蹲","1组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"78–82% × 4组 × 1–2次",cj:"78–82% × 4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"88–90% × 2–3个 single",cj:"88–90% × 2–3个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","90 kg × 4组 × 2次"],["Paused Back Squat","85 kg × 3组 × 4次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"Deload",days:{
-"周一":[["Back Squat","80 kg × 3组 × 3次"],["Front Squat","67.5 kg × 2组 × 3次"]],
-"周二":[["Snatch","60–70% × 3–4组 × 1–2次"],["Clean & Jerk","60–70% × 3个 single"]],
-"周四":[["Snatch","65–70% × 3个 single"],["Clean & Jerk","65–70% × 3个 single"]],
-"周五":[["Front Squat","75 kg × 3组 × 3次"],["Paused Back Squat","70 kg × 2组 × 4次"]]}},
+"周一":{main:[["Back Squat","80 kg × 3组 × 3次"],["Front Squat","67.5 kg × 2组 × 3次"]],assist:[["Heavy Walkout / 预蹲","可省略"],["Back Extension / 山羊挺身","2组轻量"]]},
+"周二":{choiceMain:{sn:"60–70% × 3–4组 × 1–2次",cj:"60–70% × 3个 single"},choicePull:"2组轻量",assist:[["Barbell Row / 杠铃划船","2组轻量"]]},
+"周四":{choiceMain:{sn:"65–70% × 3个 single",cj:"65–70% × 3个 single"},choicePull:"2组轻量",assist:[["Dips / 双杠臂屈伸","2组轻量"]]},
+"周五":{main:[["Front Squat","75 kg × 3组 × 3次"],["Paused Back Squat","70 kg × 2组 × 4次"]],assist:[["Pull-up / 引体向上","2组轻量"],["Rear Delt Fly / 飞鸟","2组轻量"]]}}},
 {phase:"强化",days:{
-"周一":[["Back Squat Heavy Single","105 kg × 1"],["Back Squat Back-off","95 kg × 3组 × 2次"],["Front Squat","82.5 kg × 3组 × 2次"]],
-"周二":[["Snatch","75–80% × 4个 single"],["Clean & Jerk","75–80% × 4个 single"]],
-"周四":[["Snatch","90–92% × 2–3个重 single"],["Clean & Jerk","90–92% × 2–3个重 single"]],
-"周五":[["Front Squat","90 kg × 3组 × 2次"],["Paused Back Squat","82.5 kg × 3组 × 3次"]]}},
+"周一":{main:[["Back Squat Heavy Single","105 kg × 1"],["Back Squat Back-off","95 kg × 3组 × 2次"],["Front Squat","82.5 kg × 3组 × 2次"]],assist:[["Heavy Walkout / 预蹲","1组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"75–80% × 4个 single",cj:"75–80% × 4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"90–92% × 2–3个重 single",cj:"90–92% × 2–3个重 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","90 kg × 3组 × 2次"],["Paused Back Squat","82.5 kg × 3组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"强化",days:{
-"周一":[["Back Squat Heavy Single","107.5 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5 kg × 3组 × 2次"],["Front Squat","85 kg × 3组 × 2次"]],
-"周二":[["Snatch","75–80% × 3–4个 single"],["Clean & Jerk","75–80% × 3–4个 single"]],
-"周四":[["Snatch","92–94% × 1–2个 single"],["Clean & Jerk","92–94% × 1–2个 single"]],
-"周五":[["Front Squat","92.5 kg × 3组 × 2次"],["Paused Back Squat","85 kg × 3组 × 3次"]]}},
+"周一":{main:[["Back Squat Heavy Single","107.5 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5 kg × 3组 × 2次"],["Front Squat","85 kg × 3组 × 2次"]],assist:[["Heavy Walkout / 预蹲","1组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
+"周二":{choiceMain:{sn:"75–80% × 3–4个 single",cj:"75–80% × 3–4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
+"周四":{choiceMain:{sn:"92–94% × 1–2个 single",cj:"92–94% × 1–2个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
+"周五":{main:[["Front Squat","92.5 kg × 3组 × 2次"],["Paused Back Squat","85 kg × 3组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"峰值",days:{
-"周一":[["Back Squat Heavy Single","110 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5–100 kg × 2组 × 2次"],["Front Squat","87.5 kg × 2组 × 2次"]],
-"周二":[["Snatch","70–75% × 3–4个 single"],["Clean & Jerk","70–75% × 3个 single"]],
-"周四":[["Snatch","90–95% × 1–2个高质量重 single"],["Clean & Jerk","90–95% × 1–2个高质量重 single"]],
-"周五":[["Front Squat Heavy Single","95 kg × 1"],["Front Squat Back-off","90 kg × 2组 × 2次"],["Paused Back Squat","85 kg × 2组 × 3次"]]}},
+"周一":{main:[["Back Squat Heavy Single","110 kg × 1，RPE ≤9"],["Back Squat Back-off","97.5–100 kg × 2组 × 2次"],["Front Squat","87.5 kg × 2组 × 2次"]],assist:[["Heavy Walkout / 预蹲","可选 1组"],["Back Extension / 山羊挺身","2组"]]},
+"周二":{choiceMain:{sn:"70–75% × 3–4个 single",cj:"70–75% × 3个 single"},choicePull:"2–3组",assist:[["Barbell Row / 杠铃划船","2组"]]},
+"周四":{choiceMain:{sn:"90–95% × 1–2个高质量重 single",cj:"90–95% × 1–2个高质量重 single"},choicePull:"2组",assist:[["Dips / 双杠臂屈伸","2组"]]},
+"周五":{main:[["Front Squat Heavy Single","95 kg × 1"],["Front Squat Back-off","90 kg × 2组 × 2次"],["Paused Back Squat","85 kg × 2组 × 3次"]],assist:[["Pull-up / 引体向上","2组"],["Rear Delt Fly / 飞鸟","2组"]]}}},
 {phase:"Test Week",days:{
-"周一":[["Back Squat PR Test","60×5 → 80×3 → 90×2 → 100×1 → 107.5×1 → 112.5×1 → 117.5×1 → 120×1（顺的话可122.5）"]],
-"周二":[["Snatch","60–70% × 3个 single"],["Clean & Jerk","60–70% × 2–3个 single"]],
-"周四":[["Snatch Test","70% → 80% → 87% → 92% → 95% → PR attempt"],["Clean & Jerk Test","70% → 80% → 87% → 92% → 95% → PR attempt"]],
-"周五":[["Front Squat Recovery","70–75 kg × 2组 × 2次"],["Paused Back Squat","不做"]]}
-}
-];
+"周一":{main:[["Back Squat PR Test","60×5 → 80×3 → 90×2 → 100×1 → 107.5×1 → 112.5×1 → 117.5×1 → 120×1（顺的话可122.5）"]],assist:[["Heavy Walkout / 预蹲","不做"],["Back Extension / 山羊挺身","不做"]]},
+"周二":{choiceMain:{sn:"60–70% × 3个 single",cj:"60–70% × 2–3个 single"},choicePull:"不做或极轻",assist:[["Barbell Row / 杠铃划船","不做或极轻"]]},
+"周四":{choiceMain:{sn:"70% → 80% → 87% → 92% → 95% → PR attempt",cj:"70% → 80% → 87% → 92% → 95% → PR attempt"},choicePull:"不做",assist:[["Dips / 双杠臂屈伸","不做"]]},
+"周五":{main:[["Front Squat Recovery","70–75 kg × 2组 × 2次"],["Paused Back Squat","不做"]],assist:[["Pull-up / 引体向上","轻松 1–2组"],["Rear Delt Fly / 飞鸟","轻松 1–2组"]]}}}
+]
 
 let currentWeek = Number(localStorage.getItem("wl_current_week") || 1);
 const key=(w,d,i)=>`wl_${w}_${d}_${i}`;
@@ -185,32 +294,83 @@ function render(){
  document.getElementById("weekBadge").textContent=w.phase;
  const content=document.getElementById("content"); content.innerHTML="";
  let total=0,done=0;
- Object.entries(w.days).forEach(([day,exs])=>{
+
+ function addExercise(card, day, ex, i, section){
+   total++;
+   const id=key(currentWeek,day,section+"_"+i);
+   const checked=loadField(id+"_done")==="1"; if(checked) done++;
+   const row=document.createElement("div"); row.className="exercise"+(checked?" done":"");
+   const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=checked;
+   cb.onchange=()=>{saveField(id+"_done",cb.checked?"1":"0");render()};
+   const body=document.createElement("div");
+   const displayRx=scaledPrescription(ex[0],ex[1]);
+   const calc=percentCalc(ex[0],ex[1]);
+   body.innerHTML=`<div class="exname">${ex[0]}</div><div class="prescription">${displayRx}</div>${calc?`<div class="calc">${calc}</div>`:""}`;
+   const fields=document.createElement("div"); fields.className="fields";
+   fields.innerHTML=`
+     <input placeholder="实际重量/完成情况" value="${esc(loadField(id+"_actual"))}">
+     <input placeholder="RPE" value="${esc(loadField(id+"_rpe"))}">
+     <input placeholder="备注" value="${esc(loadField(id+"_note"))}">
+   `;
+   const ins=fields.querySelectorAll("input");
+   ins[0].oninput=e=>saveField(id+"_actual",e.target.value);
+   ins[1].oninput=e=>saveField(id+"_rpe",e.target.value);
+   ins[2].oninput=e=>saveField(id+"_note",e.target.value);
+   body.appendChild(fields); row.appendChild(cb); row.appendChild(body); card.appendChild(row);
+ }
+
+ Object.entries(w.days).forEach(([day,d])=>{
    const card=document.createElement("div"); card.className="card";
    const h=document.createElement("h3"); h.textContent=day; h.style.marginTop="0"; card.appendChild(h);
-   exs.forEach((ex,i)=>{
-     total++;
-     const id=key(currentWeek,day,i);
-     const checked=loadField(id+"_done")==="1"; if(checked) done++;
-     const row=document.createElement("div"); row.className="exercise"+(checked?" done":"");
-     const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=checked;
-     cb.onchange=()=>{saveField(id+"_done",cb.checked?"1":"0");render()};
-     const body=document.createElement("div");
-     body.innerHTML=`<div class="exname">${ex[0]}</div><div class="prescription">${ex[1]}</div>`;
-     const fields=document.createElement("div"); fields.className="fields";
-     fields.innerHTML=`
-       <input placeholder="实际重量/完成情况" value="${esc(loadField(id+"_actual"))}">
-       <input placeholder="RPE" value="${esc(loadField(id+"_rpe"))}">
-       <input placeholder="备注" value="${esc(loadField(id+"_note"))}">
-     `;
-     const ins=fields.querySelectorAll("input");
-     ins[0].oninput=e=>saveField(id+"_actual",e.target.value);
-     ins[1].oninput=e=>saveField(id+"_rpe",e.target.value);
-     ins[2].oninput=e=>saveField(id+"_note",e.target.value);
-     body.appendChild(fields); row.appendChild(cb); row.appendChild(body); card.appendChild(row);
-   });
+
+   if(d.main){
+     const tag=document.createElement("div"); tag.className="sectiontag"; tag.textContent="主项"; card.appendChild(tag);
+     d.main.forEach((ex,i)=>addExercise(card,day,ex,i,"main"));
+   }
+
+   if(d.choiceMain){
+     const tag=document.createElement("div"); tag.className="sectiontag"; tag.textContent="主项二选一"; card.appendChild(tag);
+
+     const ck=`wl_${currentWeek}_${day}_mainChoice`;
+     let choice=loadField(ck)||"sn";
+     const box=document.createElement("div"); box.className="choicebox";
+     box.innerHTML=`<label>今天主项</label>
+       <select>
+         <option value="sn" ${choice==="sn"?"selected":""}>抓举 Snatch</option>
+         <option value="cj" ${choice==="cj"?"selected":""}>挺举 Clean & Jerk</option>
+       </select>`;
+     const sel=box.querySelector("select");
+     sel.onchange=e=>{saveField(ck,e.target.value);render()};
+     card.appendChild(box);
+
+     const name=choice==="sn"?"Snatch":"Clean & Jerk";
+     const rx=d.choiceMain[choice];
+     addExercise(card,day,[name,rx],0,"choiceMain");
+
+     const ptag=document.createElement("div"); ptag.className="sectiontag"; ptag.textContent="拉：二选一"; card.appendChild(ptag);
+     const pk=`wl_${currentWeek}_${day}_pullChoice`;
+     let pchoice=loadField(pk)||"wide";
+     const pbox=document.createElement("div"); pbox.className="choicebox";
+     pbox.innerHTML=`<label>今天拉</label>
+       <select>
+         <option value="wide" ${pchoice==="wide"?"selected":""}>宽拉 Snatch Pull</option>
+         <option value="narrow" ${pchoice==="narrow"?"selected":""}>窄拉 Clean Pull</option>
+       </select>
+       <div class="helper">拉的具体重量可在“实际重量/完成情况”里记录。</div>`;
+     pbox.querySelector("select").onchange=e=>{saveField(pk,e.target.value);render()};
+     card.appendChild(pbox);
+     const pname=pchoice==="wide"?"Wide Pull / 宽拉":"Narrow Pull / 窄拉";
+     addExercise(card,day,[pname,d.choicePull],0,"choicePull");
+   }
+
+   if(d.assist && d.assist.length){
+     const tag=document.createElement("div"); tag.className="sectiontag"; tag.textContent="辅助"; card.appendChild(tag);
+     d.assist.forEach((ex,i)=>addExercise(card,day,ex,i,"assist"));
+   }
+
    content.appendChild(card);
  });
+
  const pct=total?Math.round(done/total*100):0;
  document.getElementById("progressBar").style.width=pct+"%";
  document.getElementById("progressText").textContent=`本周完成 ${done}/${total} · ${pct}%`;
@@ -226,14 +386,31 @@ function exportData(){
  let out=`12周举重训练记录\n\n`;
  plan.forEach((w,wi)=>{
    out+=`WEEK ${wi+1} — ${w.phase}\n`;
-   Object.entries(w.days).forEach(([day,exs])=>{
+   Object.entries(w.days).forEach(([day,d])=>{
      out+=`${day}\n`;
-     exs.forEach((ex,i)=>{
-       const id=key(wi+1,day,i), done=loadField(id+"_done")==="1";
-       out+=`${done?"✅":"☐"} ${ex[0]} — ${ex[1]}\n`;
+
+     const emit=(ex,section,i)=>{
+       const id=key(wi+1,day,section+"_"+i), done=loadField(id+"_done")==="1";
+       out+=`${done?"✅":"☐"} ${ex[0]} — ${scaledPrescription(ex[0],ex[1])}${percentCalc(ex[0],ex[1])?" ("+percentCalc(ex[0],ex[1])+")":""}\n`;
        const a=loadField(id+"_actual"),r=loadField(id+"_rpe"),n=loadField(id+"_note");
        if(a||r||n) out+=`  实际:${a||"-"} | RPE:${r||"-"} | 备注:${n||"-"}\n`;
-     });
+     };
+
+     if(d.main) d.main.forEach((ex,i)=>emit(ex,"main",i));
+
+     if(d.choiceMain){
+       const mchoice=loadField(`wl_${wi+1}_${day}_mainChoice`)||"sn";
+       const mname=mchoice==="sn"?"Snatch":"Clean & Jerk";
+       out+=`  主项选择：${mname}\n`;
+       emit([mname,d.choiceMain[mchoice]],"choiceMain",0);
+
+       const pchoice=loadField(`wl_${wi+1}_${day}_pullChoice`)||"wide";
+       const pname=pchoice==="wide"?"Wide Pull / 宽拉":"Narrow Pull / 窄拉";
+       out+=`  拉选择：${pname}\n`;
+       emit([pname,d.choicePull],"choicePull",0);
+     }
+
+     if(d.assist) d.assist.forEach((ex,i)=>emit(ex,"assist",i));
    });
    out+="\n";
  });
@@ -242,6 +419,7 @@ function exportData(){
  setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
 function jumpToday(){ render(); window.scrollTo({top:0,behavior:"smooth"}); }
+initMaxInputs();
 render();
 </script>
 
