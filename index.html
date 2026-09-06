@@ -1,138 +1,61 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#111827">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon.svg">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="#111827" name="theme-color"/>
+<link href="manifest.webmanifest" rel="manifest"/>
+<link href="icon.svg" rel="apple-touch-icon"/>
 <title>12周举重训练计划</title>
-<style>
-:root{
-  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
-  --accent:#111827;--good:#166534;--goodbg:#dcfce7;--warn:#92400e;--warnbg:#fef3c7;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-header{position:sticky;top:0;z-index:5;background:rgba(246,247,251,.92);backdrop-filter:blur(14px);padding:18px 16px 10px;border-bottom:1px solid var(--line)}
-h1{font-size:22px;margin:0 0 6px}
-.sub{font-size:13px;color:var(--muted)}
-.wrap{max-width:760px;margin:0 auto;padding:14px 14px 90px}
-.toolbar{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
-button,.pill{border:0;border-radius:12px;padding:10px 12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:14px}
-button.active{background:var(--accent);color:white}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
-.weektitle{display:flex;justify-content:space-between;gap:12px;align-items:center}
-.weektitle h2{font-size:19px;margin:0}
-.badge{font-size:12px;padding:5px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
-.day{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-.day:first-of-type{border-top:0}
-.day h3{margin:0 0 8px;font-size:16px}
-.exercise{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:9px 0;border-bottom:1px dashed #eee}
-.exercise:last-child{border-bottom:0}
-input[type=checkbox]{width:22px;height:22px;margin-top:2px}
-.exname{font-weight:650}
-.prescription{font-size:14px;color:#374151;margin-top:2px}
-.fields{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:8px}
-.fields input,.notes,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px;background:#fff}
-.notes{margin-top:8px;min-height:40px;resize:vertical}
-.done{background:var(--goodbg)}
-.done .exname{color:var(--good);text-decoration:line-through}
-.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:8px 0 2px}
-.progress>div{height:100%;background:#111827;width:0}
-.small{font-size:12px;color:var(--muted)}
-.rules li{margin:7px 0;line-height:1.35}
-.footerbar{position:fixed;bottom:0;left:0;right:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid var(--line);backdrop-filter:blur(14px)}
-.footerbar .inner{max-width:760px;margin:auto;display:flex;gap:8px}
-.footerbar button{flex:1}
-.primary{background:#111827;color:#fff}
-.danger{color:#991b1b}
-.hidden{display:none!important}
-@media (min-width:640px){.fields{grid-template-columns:1fr 100px 1fr}.notes{margin-top:0}}
-
-.maxgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.maxbox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-.maxbox input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;background:#fff}
-.applyrow{display:flex;gap:8px;margin-top:10px}
-.applyrow button{flex:1}
-.calc{font-size:13px;color:#0f766e;margin-top:3px;font-weight:600}
-@media (min-width:640px){.maxgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-
-
-.sectiontag{display:inline-block;font-size:11px;font-weight:700;padding:4px 7px;border-radius:999px;background:#f3f4f6;color:#374151;margin-bottom:6px}
-.choicebox{margin:8px 0 12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa}
-.choicebox label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-.choicebox select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;background:#fff}
-.helper{font-size:12px;color:var(--muted);margin-top:4px}
-
-
-.schedrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin-top:10px}
-.schedrow label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-.schedrow input[type=date]{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:16px;background:#fff}
-.datehint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.4}
-.daydate{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
-.tabdate{display:block;font-size:10px;opacity:.75;margin-top:2px}
-button.week-complete{background:#dcfce7;color:#166534;border:1px solid #86efac}
-button.week-complete.active{background:#166534;color:#fff}
-.cycle-complete{border-color:#86efac;background:#f0fdf4}
-.cycle-progress-label{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.cycle-progress-label strong{font-size:17px}
-@media (max-width:460px){.schedrow{grid-template-columns:1fr}.schedrow button{width:100%}}
-
-</style>
-</head>
+<link href="app.css?v=12" rel="stylesheet"/></head>
 <body>
 <header>
-  <h1>12周举重专项深蹲 + 抓挺</h1>
-  <div class="sub" id="maxSummary">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
+<h1>12周举重专项深蹲 + 抓挺</h1>
+<div class="sub" id="maxSummary">BS 112 kg · FS 100 kg · 目标：BS 120 kg+</div>
 </header>
-
 <div class="wrap">
-  <div class="card">
-    <div class="weektitle">
-      <div>
-        <h2 style="font-size:18px">训练 Max</h2>
-        <div class="small">改完后点“应用新 Max”，整套 12 周计划会自动重算。</div>
-      </div>
-      <span class="badge">Auto</span>
-    </div>
-    <div class="maxgrid">
-      <div class="maxbox"><label>Back Squat Max (kg)</label><input id="maxBS" type="number" step="0.5" inputmode="decimal"></div>
-      <div class="maxbox"><label>Front Squat Max (kg)</label><input id="maxFS" type="number" step="0.5" inputmode="decimal"></div>
-      <div class="maxbox"><label>Snatch Max (kg)</label><input id="maxSN" type="number" step="0.5" inputmode="decimal"></div>
-      <div class="maxbox"><label>Clean & Jerk Max (kg)</label><input id="maxCJ" type="number" step="0.5" inputmode="decimal"></div>
-    </div>
-    <div class="applyrow">
-      <button class="primary" onclick="applyMaxes()">应用新 Max</button>
-      <button onclick="restoreDefaultMaxes()">恢复默认 112 / 100</button>
-    </div>
-    <div class="small" style="margin-top:8px">深蹲重量按原计划相对强度缩放并四舍五入至 2.5 kg；抓挺百分比会额外显示换算公斤数。</div>
-  </div>
-
-  <div class="card">
-    <div class="weektitle">
-      <div>
-        <h2 style="font-size:18px">周期日期</h2>
-        <div class="small">选择 Week 1 的周一；W1–W12 和每天训练都会自动显示日期。</div>
-      </div>
-      <span class="badge">Calendar</span>
-    </div>
-    <div class="schedrow">
-      <div>
-        <label for="programStart">Week 1 周一</label>
-        <input id="programStart" type="date">
-      </div>
-      <button class="primary" id="applyStartDate" type="button">应用日期</button>
-    </div>
-    <div class="datehint" id="scheduleHint">未设置开始日期。</div>
-  </div>
-
-  <div class="card" id="cycleProgressCard">
-    <div class="cycle-progress-label">
-      <div>
-        <strong>12周周期进度</strong>
-        <div class="small">整周所有项目都打勾后，该周才计为完成。</div>
-      </div>
-      <span class="badge" id="c
+<div class="card">
+<div class="weektitle"><div><h2 style="font-size:18px">训练 Max</h2><div class="small">改完后点“应用新 Max”，整套 12 周计划会自动重算。</div></div><span class="badge">Auto</span></div>
+<div class="maxgrid">
+<div class="maxbox"><label>Back Squat Max (kg)</label><input id="maxBS" inputmode="decimal" step="0.5" type="number"/></div>
+<div class="maxbox"><label>Front Squat Max (kg)</label><input id="maxFS" inputmode="decimal" step="0.5" type="number"/></div>
+<div class="maxbox"><label>Snatch Max (kg)</label><input id="maxSN" inputmode="decimal" step="0.5" type="number"/></div>
+<div class="maxbox"><label>Clean &amp; Jerk Max (kg)</label><input id="maxCJ" inputmode="decimal" step="0.5" type="number"/></div>
+</div>
+<div class="applyrow"><button class="primary" onclick="applyMaxes()">应用新 Max</button><button onclick="restoreDefaultMaxes()">恢复默认 112 / 100</button></div>
+<div class="small" style="margin-top:8px">深蹲重量按原计划相对强度缩放并四舍五入至 2.5 kg；抓挺百分比会额外显示换算公斤数。</div>
+</div>
+<div class="card">
+<div class="weektitle"><div><h2 style="font-size:18px">周期日期</h2><div class="small">选择 Week 1 的周一；W1–W12 和每天训练都会自动显示日期。</div></div><span class="badge">Calendar</span></div>
+<div class="schedrow"><div><label for="programStart">Week 1 周一</label><input id="programStart" type="date"/></div><button class="primary" id="applyStartDate" type="button">应用日期</button></div>
+<div class="datehint" id="scheduleHint">未设置开始日期。</div>
+</div>
+<div class="card" id="cycleProgressCard">
+<div class="cycle-progress-label"><div><strong>12周周期进度</strong><div class="small">整周所有项目都打勾后，该周才计为完成。</div></div><span class="badge" id="cycleProgressText">0 / 12 周</span></div>
+<div class="progress"><div id="cycleProgressBar"></div></div>
+</div>
+<div class="toolbar" id="weekTabs"></div>
+<div class="card">
+<div class="weektitle"><div><h2 id="currentWeekLabel">Week 1</h2><div class="small" id="phaseLabel"></div></div><span class="badge" id="weekBadge"></span></div>
+<div class="progress"><div id="progressBar"></div></div><div class="small" id="progressText"></div>
+</div>
+<div id="content"></div>
+<div class="card rules"><h3 style="margin-top:0">周期规则</h3><ul>
+<li>周一 Heavy Back Squat 是深蹲 progression 第一优先。</li>
+<li>周五 Heavy Front Squat 是第二优先。</li>
+<li>Paused Back Squat 永远是辅助，不做成第二个重后蹲日。</li>
+<li>周二/周四主项均为抓举或挺举二选一；再从宽拉/窄拉里二选一。</li>
+<li>周二主项以速度、位置和 0 miss 为主。</li>
+<li>周四可以重，但百分比是范围，不是命令。</li>
+<li>Heavy single 目标 RPE 8–9，不做极限 grind。</li>
+<li>恢复差：先减周五暂停蹲 1 组，再减周一辅助前蹲 1 组。</li>
+</ul></div>
+</div>
+<div class="footerbar"><div class="inner"><button onclick="jumpToday()">本周</button><button class="primary" onclick="exportData()">导出记录</button><button class="danger" onclick="resetWeek()">重置本周</button></div></div>
+<script src="plan.js?v=12"></script>
+<script src="app.js?v=12"></script>
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
+</body>
+</html>
