@@ -19,7 +19,7 @@ function addStretchButton(card){
   btn.className='warmup-set-btn stretch-start-btn';
   btn.textContent='开始拉伸';
   btn.onclick=()=>{
-    try{window.TrainingSession?.touch(row,false)}catch(e){}
+    try{window.TrainingSession?.touchWarmup(row,false)}catch(e){}
     btn.classList.add('done');
     btn.textContent='拉伸中 ✓';
   };
