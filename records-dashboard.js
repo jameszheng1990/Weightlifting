@@ -2,7 +2,7 @@
 const DAYS=['周一','周二','周三','周四','周五','周六','周日'];
 const OFFSETS={'周一':0,'周二':1,'周三':2,'周四':3,'周五':4,'周六':5,'周日':6};
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-function num(v){const n=Number(v);return Number.isFinite(n)?n:null}
+function num(v){if(v===null||v===undefined||String(v).trim()==='')return null;const n=Number(v);return Number.isFinite(n)?n:null}
 function fmt(v,d=1){return v==null?'—':Number(v.toFixed(d)).toString()}
 function parseStart(){const s=localStorage.getItem('wl_program_start')||'';const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):null}
 function dateFor(week,day){const d=parseStart();if(!d)return null;const x=new Date(d);x.setUTCDate(x.getUTCDate()+(week-1)*7+(OFFSETS[day]||0));return x}
