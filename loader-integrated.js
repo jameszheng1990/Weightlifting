@@ -1,7 +1,7 @@
 (()=>{
 const LB_TO_KG=0.45359237;
-const defs={kg:[25,20,15,10,5,2.5,1.25,0.5],lb:[45,35,25,10,5,2.5,1.25]};
-const defaults={kg:{25:1,20:0,15:0,10:1,5:1,2.5:1,1.25:1,0.5:0},lb:{45:1,35:1,25:0,10:1,5:1,2.5:1,1.25:0}};
+const defs={kg:[25,20,15,10,5,2.5,1.25,0.5],lb:[45,35,25,10,5,2.5,1.25,0.5]};
+const defaults={kg:{25:1,20:0,15:0,10:1,5:1,2.5:1,1.25:1,0.5:0},lb:{45:1,35:1,25:0,10:1,5:1,2.5:1,1.25:0,0.5:0}};
 let mode=localStorage.getItem('bl_mode')||'nearest';
 let inventory=loadInventory();
 let barType=localStorage.getItem('bl_bar_type')||'20kg';
