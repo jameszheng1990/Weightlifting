@@ -1,6 +1,6 @@
 (()=>{
 const LB_TO_KG=0.45359237;
-const defs={kg:[25,20,15,10,5,2.5,1.25,0.5],lb:[45,35,25,10,5,2.5,1.25]};
+const defs={kg:[25,20,15,10,5,2.5,1.25,0.5],lb:[45,35,25,10,5,2.5,1.25,0.5]};
 const $=s=>document.querySelector(s);
 let counts={};
 try{counts=JSON.parse(localStorage.getItem('bl_reverse_counts')||'{}')||{}}catch(e){counts={}}
