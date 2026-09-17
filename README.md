@@ -1,7 +1,7 @@
 # 12周举重训练 App
 -- Coded by ChatGPT
 
-一个部署在 GitHub Pages 上的个人举重训练网页 App。当前版本围绕 **深蹲突破 + 抓挺技术训练** 设计，包含 12 周周期、Dynamic Max、日历、逐组训练记录、热身 / 正式组独立计时、RPE Calculator、每日记录，以及双向 Barbell Load 计算。
+一个部署在 GitHub Pages 上的个人举重训练网页 App。当前版本围绕 **深蹲突破 + 抓挺技术训练** 设计，包含 12 周周期、Dynamic Max、日历、逐组训练记录、热身 / 正式组独立计时、每日恢复与活动记录、趋势图、RPE Calculator，以及双向 Barbell Load 计算。
 
 ## 当前功能
 
@@ -79,6 +79,8 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 - 状态会保存，刷新页面后仍能记住已经开始
 - 不计入热身组完成数
 
+周二 / 周四的抓举或挺举主项，也有独立的热身开始与热身完成计时。
+
 ## 训练计时
 当前使用正向 stopwatch，不使用组间倒计时。
 
@@ -122,6 +124,9 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
   - 分钟
   - miles
   - 可添加多条
+- 体重（kg）
+- Calories Burned（kcal）
+- 睡眠（hours）
 - 拉伸
 - 肌酸
 
@@ -134,7 +139,26 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 - 拉伸完成
 - 肌酸完成
 
-有氧为可选，不影响完成状态。
+有氧、体重、Calories Burned、睡眠为记录项，不影响当天完成状态。
+
+## 训练记录
+`训练记录` Tab 现在主要用于查看长期恢复和活动趋势。
+
+当前显示：
+- **Body Weight**
+- **Calories Burned**
+- **Daily Miles**
+- **Sleep**
+
+其中：
+- Body Weight / Calories Burned / Sleep 来自每日手动输入
+- Daily Miles 会自动把同一天所有有氧记录中的 miles 相加
+- 每张图右上角显示当前已有数据的 **平均值**
+- 数据点可点击 / 触摸，显示该点的日期和具体数值
+- 数据点超过 20 个时，横轴可左右滚动查看
+- 可切换到 **整体趋势**，把全部数据压缩到一屏
+
+早期的 PR / e1RM 汇总与趋势显示已从训练记录页移除，避免不稳定的估算结果干扰使用。
 
 ## Barbell Load
 Barbell Load 现在有两个子功能。
@@ -145,6 +169,8 @@ Barbell Load 现在有两个子功能。
 支持：
 - KG + LB plates 混合使用
 - 自定义 plate inventory 和每种片的对数
+- KG：25 / 20 / 15 / 10 / 5 / 2.5 / 1.25 / 0.5
+- LB：45 / 35 / 25 / 10 / 5 / 2.5 / 1.25 / 0.5
 - 20 kg bar / 45 lb bar
 - 可选 collars
 - 单个 collar 重量可输入 kg 或 lb
@@ -157,6 +183,11 @@ Barbell Load 现在有两个子功能。
 - **向上**：不低于目标的最近组合
 
 误差相同时优先使用更少的 plates。
+
+配重结果中：
+- 每侧挂片会按 **真实绝对重量从大到小** 排序
+- KG / LB 混合时先统一换算后排序
+- 会显示图形化挂片示意，更方便一眼看清挂片顺序
 
 ### 挂片 → 总重量
 反向计算当前杠铃实际总重量。
@@ -172,6 +203,8 @@ Barbell Load 现在有两个子功能。
 `bar + 2 × collars + 左右两侧 plates = 当前总重量`
 
 该子功能与“目标重量 → 配片”的 bar / collar 设置相互独立。
+
+`当前总重量` 卡片会在向下浏览 KG / LB plate 列表时 sticky 保持在顶部，方便边加减片边看总重量变化。
 
 ## RPE Calculator
 独立的 `RPE Calculator` Tab，支持两种计算：
@@ -194,15 +227,7 @@ Barbell Load 现在有两个子功能。
 - 理论目标重量
 - 按 2.5 kg 四舍五入后的实际训练重量
 
-## 训练记录
-原来的“工具”已改名为 **训练记录**。
-
-这里保留：
-- e1RM
-- 历史记录
-- 趋势
-- 训练用时
-- JSON 备份 / 恢复
+RPE Calculator 作为独立手动工具保留，不再自动把结果作为训练记录页的 PR / e1RM 指标。
 
 ## JSON 备份 / 恢复
 可备份包括：
@@ -213,9 +238,10 @@ Barbell Load 现在有两个子功能。
 - 每组 RPE / 备注
 - 训练日志与计时
 - 每日记录
+- 体重 / Calories Burned / 睡眠 / cardio miles
 - Barbell inventory
 - Barbell / collars 设置
-- e1RM 相关数据
+- 其他 App 本地设置
 
 然后可在另一台设备重新导入。
 
@@ -247,12 +273,15 @@ Safari 打开 GitHub Pages：
 - `set-tracker.js` / `set-tracker.css` — 热身 / 正式组逐组按钮、RPE、备注、PR Test
 - `session.js` / `session.css` — 总计时、热身计时、动作独立计时、历史训练时间
 - `stretch.js` — 开始拉伸按钮与状态保存
-- `daily.js` / `daily.css` — Mon–Sun 每日记录、有氧、拉伸、肌酸
+- `olympic-warmup.js` / `olympic-warmup.css` — 周二 / 周四抓挺主项热身计时
+- `daily.js` / `daily.css` — Mon–Sun 每日记录、有氧、体重、热量、睡眠、拉伸、肌酸
+- `records-dashboard.js` / `records-dashboard.css` — 训练记录趋势图与统计
+- `records-interactive.js` — 趋势图点击 / 触摸交互、详细 / 整体趋势切换
 - `loader-integrated.js` / `loader-integrated.css` — 目标重量 → 配片
 - `loader-reverse.js` / `loader-reverse.css` — 挂片 → 总重量
+- `loader-visual.js` / `loader-visual.css` — 挂片排序与图形化配重预览
 - `rpe-calculator.js` / `rpe-calculator.css` — RPE / e1RM Calculator
-- `features.js` / `features.css` — 训练记录、e1RM、备份等
-- `trend.js` — e1RM 趋势
+- `features.js` / `features.css` — 训练记录页面框架、备份等辅助功能
 - `manifest.webmanifest` / `sw.js` — PWA / Service Worker
 
 ## 部署
@@ -264,4 +293,4 @@ GitHub Pages 从 `main` 分支部署。
 
 ---
 
-这个项目目前已经从一张 12 周训练表，扩展成一个包含 **周期计划 + 逐组记录 + 双向配重 + RPE 计算 + 分层计时 + 每日习惯记录** 的个人举重训练 App。
+这个项目目前已经从一张 12 周训练表，扩展成一个包含 **周期计划 + 逐组训练记录 + 双向配重 + RPE 计算 + 分层计时 + 每日恢复 / 活动追踪 + 长期趋势图** 的个人举重训练 App。
