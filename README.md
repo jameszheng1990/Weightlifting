@@ -1,4 +1,5 @@
 # 12周举重训练 App
+--- Assisted by ChatGPT
 
 一个部署在 GitHub Pages 上的个人举重训练网页 App。当前版本围绕 **深蹲突破 + 抓挺技术训练** 设计，包含 12 周周期、Dynamic Max、日历、逐组训练记录、热身 / 正式组独立计时、RPE Calculator、每日记录，以及双向 Barbell Load 计算。
 
