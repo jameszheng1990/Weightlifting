@@ -4,6 +4,7 @@
 .records-stat{border:1px solid #e5e5ea;border-radius:18px;padding:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .records-stat .label{font-size:12px;color:#8e8e93}.records-stat .value{font-size:24px;font-weight:800;margin-top:4px}.records-stat .subvalue{font-size:12px;color:#8e8e93;margin-top:3px}
 .records-chart-card{--metric-color:#007aff;--metric-soft:rgba(0,122,255,.10);border:1px solid #e5e5ea;border-radius:22px;padding:16px 14px 14px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.035)}
+.records-chart-card.metric-training{--metric-color:#ff9f0a;--metric-soft:rgba(255,159,10,.11)}
 .records-chart-card.metric-weight{--metric-color:#bf5af2;--metric-soft:rgba(191,90,242,.11)}
 .records-chart-card.metric-calories{--metric-color:#ff375f;--metric-soft:rgba(255,55,95,.10)}
 .records-chart-card.metric-miles{--metric-color:#30b0c7;--metric-soft:rgba(48,176,199,.11)}
