@@ -145,12 +145,14 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 `训练记录` Tab 现在主要用于查看长期恢复和活动趋势。
 
 当前显示：
+- **Training Duration** — 每次训练总时长（分钟）
 - **Body Weight**
 - **Calories Burned**
 - **Daily Miles**
 - **Sleep**
 
 其中：
+- Training Duration 来自已保存的每次训练 session 总用时
 - Body Weight / Calories Burned / Sleep 来自每日手动输入
 - Daily Miles 会自动把同一天所有有氧记录中的 miles 相加
 - 每张图右上角显示当前已有数据的 **平均值**
@@ -162,6 +164,7 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 
 ### iOS Health 风格趋势图
 训练记录趋势图采用更接近 iOS Health 的视觉设计，每类指标使用独立颜色：
+- **Training Duration**：橙色
 - **Body Weight**：紫色
 - **Calories Burned**：红 / 粉色
 - **Daily Miles**：青色
