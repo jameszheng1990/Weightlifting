@@ -1,7 +1,7 @@
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 function fmt(v,unit){const n=Number(v);if(!Number.isFinite(n))return String(v||'');return unit==='kcal'?Math.round(n).toString():Number(n.toFixed(1)).toString()}
-function parseCardUnit(card){const title=$('.records-chart-title',card)?.textContent?.trim()||'';if(/Calories/i.test(title))return'kcal';if(/Miles/i.test(title))return'mi';if(/Sleep/i.test(title))return'h';return'kg'}
+function parseCardUnit(card){const title=$('.records-chart-title',card)?.textContent?.trim()||'';if(/Calories/i.test(title))return'kcal';if(/Miles/i.test(title))return'mi';if(/Sleep/i.test(title))return'h';if(/Training Duration/i.test(title))return'min';return'kg'}
 function attachSvg(card,svg){
   if(!svg||svg.dataset.interactive==='1')return;
   svg.dataset.interactive='1';card.classList.add('records-chart-interactive');
