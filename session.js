@@ -8,7 +8,7 @@ function duration(sec){sec=Math.max(0,Math.round(sec||0));const h=Math.floor(sec
 function loadActive(){try{return JSON.parse(localStorage.getItem(ACTIVE)||'null')}catch(e){return null}}
 function saveActive(s){if(s)localStorage.setItem(ACTIVE,JSON.stringify(s));else localStorage.removeItem(ACTIVE)}
 function loadHistory(){try{const h=JSON.parse(localStorage.getItem(HISTORY)||'[]');return Array.isArray(h)?h:[]}catch(e){return[]}}
-function saveHistory(h){localStorage.setItem(HISTORY,JSON.stringify(h.slice(-200)))}
+function saveHistory(h){localStorage.setItem(HISTORY,JSON.stringify(h.slice(-200)));window.dispatchEvent(new Event('wlSessionHistoryChanged'))}
 function elapsedMs(s,now=Date.now()){if(!s)return 0;const end=s.pausedAt||now;return Math.max(0,end-s.startAt-(s.pausedMs||0))}
 function rowMeta(row){const h=row?.closest('.card')?.querySelector('h3')?.textContent?.trim()||'';const day=(h.match(/周[一二三四五六日]/)||[])[0]||h||'训练';let week=Number(localStorage.getItem('wl_current_week')||1);try{week=Number(currentWeek)||week}catch(e){}const name=row?.querySelector('.exname')?.textContent?.trim()||'训练';const rx=row?.querySelector('.prescription')?.textContent?.trim()||'';return{day,week,name,rx}}
 function warmupMeta(row){const m=rowMeta(row);return{...m,name:`${m.name} 热身`,rx:`${m.rx} [warmup]`}}
