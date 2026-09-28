@@ -18,7 +18,7 @@ function attachCard(card){
   card.dataset.interactiveCard='1';
   $$('svg.records-chart',card).forEach(svg=>attachSvg(card,svg));
   const btn=$('.records-span-toggle',card),detail=$('.records-chart-detail',card),overview=$('.records-chart-overview',card);
-  if(btn&&detail&&overview){btn.addEventListener('click',()=>{const full=btn.dataset.mode!=='full';btn.dataset.mode=full?'full':'detail';btn.textContent=full?'逐点查看':'整体趋势';detail.hidden=full;overview.hidden=!full;const tip=$('.records-point-tooltip',card);if(tip)tip.hidden=true})}
+  if(btn&&detail&&overview){btn.addEventListener('click',()=>{const currentlyFull=btn.dataset.mode==='full';const nextFull=!currentlyFull;btn.dataset.mode=nextFull?'full':'detail';btn.textContent=nextFull?'整体趋势':'逐点查看';detail.hidden=nextFull;overview.hidden=!nextFull;const tip=$('.records-point-tooltip',card);if(tip)tip.hidden=true})}
 }
 function attach(){ $$('.records-chart-card').forEach(attachCard) }
 let obs=null;function init(){attach();if(obs)obs.disconnect();obs=new MutationObserver(()=>setTimeout(attach,30));const tools=$('#toolsView');if(tools)obs.observe(tools,{childList:true,subtree:true})}
