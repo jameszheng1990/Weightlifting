@@ -1,5 +1,5 @@
 .daily-metrics-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.daily-metrics-grid label{font-size:12px;color:var(--muted)}.daily-metrics-grid input{width:100%;margin-top:5px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;background:#fff}
-.records-dashboard{display:grid;gap:10px;width:calc(100% - 28px);max-width:620px;margin:0 auto 10px}
+.records-dashboard{display:grid;gap:10px;width:86%;max-width:520px;margin:0 auto 10px}
 .records-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .records-stat{border:1px solid #e5e5ea;border-radius:18px;padding:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .records-stat .label{font-size:12px;color:#8e8e93}.records-stat .value{font-size:24px;font-weight:800;margin-top:4px}.records-stat .subvalue{font-size:12px;color:#8e8e93;margin-top:3px}
@@ -32,4 +32,4 @@
 .records-point-tooltip b{display:block;font-size:11px;font-weight:650;opacity:.72;margin-bottom:2px}.records-point-tooltip span{display:block;font-size:14px;font-weight:800;color:#fff}
 .records-point-tooltip:after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid rgba(28,28,30,.94)}
 .records-note{font-size:12px;color:#8e8e93;line-height:1.45}
-@media(max-width:560px){.records-dashboard{width:calc(100% - 20px)}.daily-metrics-grid{grid-template-columns:1fr}.records-summary-grid{grid-template-columns:1fr 1fr}.records-chart-head{align-items:flex-start}.records-chart-head-right{max-width:60%}.records-chart-card{border-radius:17px;padding:10px 10px 8px}.records-chart-title{font-size:15px}.records-chart{height:108px}.records-chart.records-chart-wide{height:108px}.records-chart-latest{font-size:11px}.records-span-toggle{padding:4px 7px;font-size:10px}}
+@media(max-width:560px){.records-dashboard{width:86%;max-width:none}.daily-metrics-grid{grid-template-columns:1fr}.records-summary-grid{grid-template-columns:1fr 1fr}.records-chart-head{align-items:flex-start}.records-chart-head-right{max-width:60%}.records-chart-card{border-radius:17px;padding:10px 10px 8px}.records-chart-title{font-size:15px}.records-chart{height:108px}.records-chart.records-chart-wide{height:108px}.records-chart-latest{font-size:11px}.records-span-toggle{padding:4px 7px;font-size:10px}}
