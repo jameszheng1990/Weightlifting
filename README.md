@@ -145,7 +145,7 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 `训练记录` Tab 现在主要用于查看长期恢复和活动趋势。
 
 当前显示：
-- **Training Duration** — 每次训练总时长（分钟）
+- **Training Duration** — 每次训练总时长（分钟）；少于 5 分钟的误触/未完成 session 不计入趋势和平均值
 - **Body Weight**
 - **Calories Burned**
 - **Daily Miles**
