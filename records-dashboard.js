@@ -14,7 +14,7 @@ function trainingDurationPoints(){
   if(!Array.isArray(hist))return[];
   const byDay=new Map();
   hist.forEach((h,i)=>{
-    const sec=num(h?.durationSec);if(sec==null||sec<=0)return;
+    const sec=num(h?.durationSec);if(sec==null||sec<300)return;
     const key=h?.date||`#${i+1}`;
     const prev=byDay.get(key)||{date:key,sec:0,time:Number(h?.startAt)||Number(h?.endAt)||i};
     prev.sec+=sec;
