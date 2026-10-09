@@ -11,22 +11,35 @@ function metricPoints(suffix){const pts=[];for(let w=1;w<=12;w++)for(const day o
 function cardioMilesPoints(){const pts=[];for(let w=1;w<=12;w++)for(const day of DAYS){let rows=[];try{rows=JSON.parse(localStorage.getItem(`wl_daily_${w}_${day}_cardio`)||'[]')}catch(e){}if(!Array.isArray(rows)||!rows.length)continue;let total=0,has=false;for(const item of rows){const v=num(item?.miles);if(v==null)continue;total+=v;has=true}if(!has)continue;const d=dateFor(w,day);pts.push({week:w,day,label:labelFor(w,day),time:d?d.getTime():w*10+(OFFSETS[day]||0),value:total})}return pts.sort((a,b)=>a.time-b.time)}
 function trainingDurationPoints(){
   let hist=[];try{hist=JSON.parse(localStorage.getItem('wl_session_history')||'[]')}catch(e){}
-  if(!Array.isArray(hist))return[];
-  const byDay=new Map();
+  if(!Array.isArray(hist))hist=[];
+  const byDate=new Map();
+
   hist.forEach((h,i)=>{
     const sec=num(h?.durationSec);if(sec==null||sec<300)return;
     const key=h?.date||`#${i+1}`;
-    const prev=byDay.get(key)||{date:key,sec:0,time:Number(h?.startAt)||Number(h?.endAt)||i};
+    const prev=byDate.get(key)||{date:key,sec:0,time:Number(h?.startAt)||Number(h?.endAt)||i};
     prev.sec+=sec;
     prev.time=Math.min(prev.time,Number(h?.startAt)||Number(h?.endAt)||i);
-    byDay.set(key,prev);
+    byDate.set(key,prev);
   });
-  return [...byDay.values()].map(x=>{
-    if(x.sec<300)return null;
+
+  const out=new Map();
+  for(const x of byDate.values()){
+    if(x.sec<300)continue;
     let label=x.date;
     if(/^\d{4}-\d{2}-\d{2}$/.test(x.date)){const m=x.date.match(/^(\d{4})-(\d{2})-(\d{2})$/);label=`${Number(m[2])}/${Number(m[3])}`}
-    return{label,time:x.time,value:x.sec/60};
-  }).filter(Boolean).sort((a,b)=>a.time-b.time)
+    out.set(x.date,{label,time:x.time,value:x.sec/60,source:'auto'});
+  }
+
+  for(let w=1;w<=12;w++)for(const day of DAYS){
+    const manual=num(localStorage.getItem(`wl_daily_${w}_${day}_training_minutes`));
+    if(manual==null)continue;
+    const d=dateFor(w,day);
+    const dateKey=d?`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`:`W${w}-${day}`;
+    out.set(dateKey,{week:w,day,label:labelFor(w,day),time:d?d.getTime():w*10+(OFFSETS[day]||0),value:manual,source:'manual'});
+  }
+
+  return [...out.values()].sort((a,b)=>a.time-b.time)
 }
 function svgChart(points,unit,overview=false){
   if(!points.length)return '<div class="records-chart-empty">还没有记录</div>';
