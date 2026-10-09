@@ -120,6 +120,7 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 训练计划内有 Mon–Sun 每日 Tab。
 
 每天可以记录：
+- 训练时长（min，可手动覆盖自动计时结果）
 - `＋ 添加有氧`
   - 分钟
   - miles
@@ -152,7 +153,7 @@ PR Test 会把每次尝试单独显示，而不是误识别成普通组数。
 - **Sleep**
 
 其中：
-- Training Duration 来自已保存的每次训练 session 总用时
+- Training Duration 默认来自已保存的每次训练 session 总用时；如果当天手动填写“训练时长 (min)”，图表会优先使用手动值
 - Body Weight / Calories Burned / Sleep 来自每日手动输入
 - Daily Miles 会自动把同一天所有有氧记录中的 miles 相加
 - 每张图右上角显示当前已有数据的 **平均值**
