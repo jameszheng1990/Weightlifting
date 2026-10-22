@@ -43,12 +43,12 @@ const plan = [
 "周一":{main:[["Back Squat Heavy Single","105 kg × 1","腰带：建议使用，开始固定成 PR 日的松紧和位置。"],["Back Squat Back-off","95 kg × 3组 × 2次","腰带：可选；需要时用，不必每组都戴。"],["Front Squat","82.5 kg × 3组 × 2次"]],assist:[["Heavy Walkout / 预蹲","1组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
 "周二":{choiceMain:{sn:"75–80% × 4个 single",cj:"75–80% × 4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
 "周四":{choiceMain:{sn:"90–92% × 2–3个重 single",cj:"90–92% × 2–3个重 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
-"周五":{main:[["Front Squat","90 kg × 3组 × 2次"],["Paused Back Squat","82.5 kg × 2组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
+"周五":{main:[["Front Squat","90 kg × 3组 × 2次","腰带：建议开始适应；可前1组无腰带，后2组使用。"],["Paused Back Squat","82.5 kg × 2组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"强化",days:{
 "周一":{main:[["Back Squat Heavy Single","107.5 kg × 1，RPE ≤9","腰带：建议使用，按 PR 日方式呼吸和撑压。"],["Back Squat Back-off","97.5 kg × 3组 × 2次","腰带：建议使用或至少后两组使用。"],["Front Squat","85 kg × 3组 × 2次"]],assist:[["Heavy Walkout / 预蹲","1组，重重量支撑"],["Back Extension / 山羊挺身","3组"]]},
 "周二":{choiceMain:{sn:"75–80% × 3–4个 single",cj:"75–80% × 3–4个 single"},choicePull:"3组",assist:[["Barbell Row / 杠铃划船","3组"]]},
 "周四":{choiceMain:{sn:"92–94% × 1–2个 single",cj:"92–94% × 1–2个 single"},choicePull:"3组",assist:[["Dips / 双杠臂屈伸","3组"]]},
-"周五":{main:[["Front Squat","92.5 kg × 3组 × 2次"],["Paused Back Squat","85 kg × 2组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
+"周五":{main:[["Front Squat","92.5 kg × 3组 × 2次","腰带：建议使用，固定成前蹲 PR 日的松紧和位置。"],["Paused Back Squat","85 kg × 2组 × 3次"]],assist:[["Pull-up / 引体向上","3组"],["Rear Delt Fly / 飞鸟","3组"]]}}},
 {phase:"峰值",days:{
 "周一":{main:[["Back Squat Heavy Single","110 kg × 1，RPE ≤9","腰带：使用；完全按 PR 日配置。"],["Back Squat Back-off","97.5–100 kg × 2组 × 2次","腰带：建议使用，练同样的腹压节奏。"],["Front Squat","87.5 kg × 2组 × 2次"]],assist:[["Heavy Walkout / 预蹲","可选 1组"],["Back Extension / 山羊挺身","2组"]]},
 "周二":{choiceMain:{sn:"70–75% × 3–4个 single",cj:"70–75% × 3个 single"},choicePull:"2–3组",assist:[["Barbell Row / 杠铃划船","2组"]]},
