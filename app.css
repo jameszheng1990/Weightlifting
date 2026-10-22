@@ -23,6 +23,7 @@ button.active{background:var(--accent);color:white}
 input[type=checkbox]{width:22px;height:22px;margin-top:2px}
 .exname{font-weight:650}
 .prescription{font-size:14px;color:#374151;margin-top:2px}
+.exercise-note{font-size:11px;line-height:1.4;color:#6b7280;margin-top:4px}
 .fields{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:8px}
 .fields input,.notes,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px;background:#fff}
 .notes{margin-top:8px;min-height:40px;resize:vertical}
