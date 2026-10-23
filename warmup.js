@@ -24,7 +24,7 @@
     root=document.getElementById("content");
     if(!root) return;
     if(obs) obs.disconnect();
-    root.querySelectorAll(".warmup-box,.warmup-record").forEach(e=>e.remove());
+    root.querySelectorAll(".warmup-box:not(.native-warmup-box),.warmup-record").forEach(e=>e.remove());
     const cards=[...root.querySelectorAll(":scope > .card")];
     cards.forEach(card=>{
       const h=card.querySelector("h3");
@@ -34,15 +34,15 @@
         const ex=[...card.querySelectorAll(".exercise")];
         const bs=ex.find(e=>/Back Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!/Paused/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
         const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
-        if(bs){const rx=bs.querySelector(".prescription")?.textContent||"";bs.before(box(full(parseWorkWeight(rx,trainingMaxes.bs*.75)),false));}
-        if(fs){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(short(parseWorkWeight(rx,trainingMaxes.fs*.75)),true));}
+        if(bs&&!bs.previousElementSibling?.classList?.contains("native-warmup-box")){const rx=bs.querySelector(".prescription")?.textContent||"";bs.before(box(full(parseWorkWeight(rx,trainingMaxes.bs*.75)),false));}
+        if(fs&&!fs.previousElementSibling?.classList?.contains("native-warmup-box")){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(short(parseWorkWeight(rx,trainingMaxes.fs*.75)),true));}
       }
       if(day.startsWith("周五")){
         const ex=[...card.querySelectorAll(".exercise")];
         const fs=ex.find(e=>/Front Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
         const pbs=ex.find(e=>/Paused Back Squat/i.test(e.querySelector(".exname")?.textContent||"")&&!isPrTest(e));
-        if(fs){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(full(parseWorkWeight(rx,trainingMaxes.fs*.80)),false));}
-        if(pbs){const rx=pbs.querySelector(".prescription")?.textContent||"";pbs.before(box(short(parseWorkWeight(rx,trainingMaxes.bs*.70)),true));}
+        if(fs&&!fs.previousElementSibling?.classList?.contains("native-warmup-box")){const rx=fs.querySelector(".prescription")?.textContent||"";fs.before(box(full(parseWorkWeight(rx,trainingMaxes.fs*.80)),false));}
+        if(pbs&&!pbs.previousElementSibling?.classList?.contains("native-warmup-box")){const rx=pbs.querySelector(".prescription")?.textContent||"";pbs.before(box(short(parseWorkWeight(rx,trainingMaxes.bs*.70)),true));}
       }
     });
     if(obs&&root)obs.observe(root,{childList:true,subtree:true});
