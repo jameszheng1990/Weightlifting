@@ -70,5 +70,5 @@ function addWarmupTracker(box){if(box.nextElementSibling?.classList?.contains('w
 function cleanQuickLoad(){document.querySelectorAll('.quick-load-btn,#setCurrentBar,.feature-actions').forEach(el=>el.style.display='none');const t=document.querySelector('#toolsView .tools-card .small');if(t&&/Quick Load/.test(t.textContent))t.textContent='组数记录、e1RM、训练用时、备份都在这里。'}
 function inject(){cleanQuickLoad();$$('.exercise').forEach(addFormalTracker);$$('.warmup-box').forEach(addWarmupTracker)}
 let busy=false;function schedule(){if(busy)return;busy=true;setTimeout(()=>{busy=false;inject()},60)}
-window.addEventListener('DOMContentLoaded',()=>{inject();const root=document.getElementById('content');if(root)new MutationObserver(schedule).observe(root,{childList:true,subtree:true})});window.addEventListener('pageshow',()=>setTimeout(inject,120));
+window.addEventListener('DOMContentLoaded',()=>{inject();const root=document.getElementById('content');if(root)new MutationObserver(schedule).observe(root,{childList:true,subtree:true})});window.addEventListener('pageshow',()=>setTimeout(inject,120));window.addEventListener('wlPlanRendered',()=>setTimeout(inject,0));
 })();
