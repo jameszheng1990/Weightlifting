@@ -57,4 +57,5 @@
   });
   window.addEventListener("DOMContentLoaded",()=>{root=document.getElementById("content");if(root)obs.observe(root,{childList:true,subtree:true});setTimeout(inject,80)});
   window.addEventListener("pageshow",()=>setTimeout(inject,80));
+  window.addEventListener("wlPlanRendered",()=>setTimeout(inject,0));
 })();
