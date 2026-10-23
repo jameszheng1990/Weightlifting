@@ -27,7 +27,7 @@ function originalCheckbox(row){return [...row.children].find(x=>x instanceof HTM
 function linkedWarmup(row){const p=row.previousElementSibling;return p&&p.classList.contains('warmup-record')?p:null}
 function warmupComplete(row){const rec=linkedWarmup(row);if(!rec)return true;const buttons=$$('.warmup-set-btn:not(.stretch-start-btn)',rec);return buttons.length>0&&buttons.every(b=>b.classList.contains('done'))}
 function workComplete(row){const buttons=$$('.work-set-btn',row);return buttons.length>0&&buttons.every(b=>b.classList.contains('done'))}
-function syncSection(row){const cb=originalCheckbox(row);if(!cb)return false;const workButtons=$('.work-set-btn',row);if(!workButtons.length)return cb.checked;const should=workButtons.every(b=>b.classList.contains('done'))&&warmupComplete(row);if(cb.checked!==should)cb.click();return should}
+function syncSection(row){const cb=originalCheckbox(row);if(!cb)return false;const workButtons=[...row.querySelectorAll('.work-set-btn')];if(!workButtons.length)return cb.checked;const should=workButtons.every(b=>b.classList.contains('done'))&&warmupComplete(row);if(cb.checked!==should)cb.click();return should}
 function notifySession(row,complete=false){try{window.TrainingSession?.touch(row,complete)}catch(e){}}
 function notifyWarmupSession(row,complete=false){try{window.TrainingSession?.touchWarmup(row,complete)}catch(e){}}
 function syncLegacyField(input,value){if(!input)return;input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('blur',{bubbles:true}))}
